@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer components {
   .flexCenter {
     @apply items-center justify-center;
@@ -10,10 +9,12 @@
   .flexBetween {
     @apply items-center justify-between;
   }
+  /* Primary CTA button — teal */
   .btn {
-    @apply flex-row flexCenter gap-2 bg-primary rounded-3xl py-4 items-center;
+    @apply flex-row items-center justify-center gap-2 bg-primary rounded-2xl py-4;
   }
+  /* Dark auth input */
   .input {
-    @apply bg-white border border-accent-200 text-accent rounded-[1.1rem] px-4 py-3.5 text-sm;
+    @apply bg-accent-200 border border-primary/40 text-white rounded-[14px] px-4 py-3.5 text-sm;
   }
 }
