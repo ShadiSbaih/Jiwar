@@ -46,7 +46,6 @@ export default function HomeScreen() {
                         {/* Brand mark */}
                         <View>
                             <Text style={{ color: '#FFFFFF', fontSize: 22, fontWeight: '900', letterSpacing: -0.5 }}>Jiwar</Text>
-                            <Text style={{ color: '#4ADE80', fontSize: 10, fontWeight: '600', letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 1 }}>Real Estate</Text>
                         </View>
 
                         {/* Greeting + avatar */}

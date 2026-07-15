@@ -6,6 +6,7 @@ import {
     Platform, ScrollView, Text, TextInput, TouchableOpacity, View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import OTPInput from "../../components/OTPInput";
 
 const C = {
     pine:     '#08383C',
@@ -128,12 +129,10 @@ export default function SignInScreen() {
 
                         {needsVerification ? (
                             <>
-                                <AuthInput
-                                    placeholder="6-digit code"
-                                    value={verifyCode}
-                                    onChangeText={setVerifyCode}
-                                    keyboardType="number-pad"
-                                    style={{ textAlign: 'center', letterSpacing: 10, fontSize: 22 }}
+                                <OTPInput
+                                    code={verifyCode}
+                                    setCode={setVerifyCode}
+                                    maximumLength={6}
                                 />
                                 {errors.fields.code && (
                                     <Text style={{ color: '#F87171', fontSize: 12, marginTop: -6 }}>{errors.fields.code.message}</Text>
