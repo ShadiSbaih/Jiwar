@@ -49,7 +49,10 @@ export default function HomeScreen() {
                         </View>
 
                         {/* Greeting + avatar */}
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <TouchableOpacity 
+                            onPress={() => router.push('/(root)/(tabs)/profile')}
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}
+                        >
                             <View style={{ alignItems: 'flex-end' }}>
                                 <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '700' }}>
                                     Hi {user?.firstName ?? 'there'} 👋
@@ -69,7 +72,7 @@ export default function HomeScreen() {
                                     </View>
                                 )}
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     </View>
 
                     {/* Search bar */}

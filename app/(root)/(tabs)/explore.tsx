@@ -130,7 +130,7 @@ export default function ExploreScreen() {
                 </View>
             </SafeAreaView>
 
-            <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
                 {/* Active filter chips */}
                 {activeFilterCount > 0 && (
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 20, paddingTop: 14, paddingBottom: 4 }}>
@@ -202,7 +202,7 @@ export default function ExploreScreen() {
                 />
 
                 <FilterModal visible={showFilters} onClose={() => setShowFilters(false)} />
-            </SafeAreaView>
+            </View>
         </View>
     );
 }

@@ -43,7 +43,7 @@ export default function FavoritesScreen() {
                 </View>
             </SafeAreaView>
 
-            <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
                 {isLoading ? (
                     <View style={{ flex: 1, padding: 20, paddingTop: 24 }}>
                         <PropertyCardSkeleton />
@@ -97,7 +97,7 @@ export default function FavoritesScreen() {
                         }
                     />
                 )}
-            </SafeAreaView>
+            </View>
         </View>
     );
 }

@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Image, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { userUserStore } from '@/store/userStore';
 
 function MenuItem({
     icon,
@@ -56,6 +57,7 @@ function MenuItem({
 
 export default function ProfileScreen() {
     const { user, isLoaded } = useUser();
+    const isAdmin = userUserStore((state) => state.isAdmin);
     const [isUpdatingPhoto, setIsUpdatingPhoto] = useState(false);
     const { signOut } = useAuth();
     const router = useRouter();
@@ -141,9 +143,12 @@ export default function ProfileScreen() {
                     </View>
 
                     {/* Name + badge */}
-                    <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: '800', marginBottom: 4 }}>
-                        {user.firstName} {user.lastName}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                        <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: '800' }}>
+                            {user.firstName} {user.lastName}
+                        </Text>
+
+                    </View>
                     <Text style={{ color: '#9CA3AF', fontSize: 13, marginBottom: 10 }}>
                         {user.emailAddresses[0].emailAddress}
                     </Text>
@@ -158,12 +163,26 @@ export default function ProfileScreen() {
                     }}>
                         <Ionicons name="checkmark-circle" size={13} color="#4ADE80" />
                         <Text style={{ color: '#4ADE80', fontSize: 12, fontWeight: '700' }}>Verified Member</Text>
+                        {isAdmin && (
+                            <View style={{
+                                backgroundColor: 'rgba(74, 222, 128, 0.15)',
+                                paddingHorizontal: 8,
+                                paddingVertical: 3,
+                                borderRadius: 8,
+                                borderWidth: 1,
+                                borderColor: 'rgba(74, 222, 128, 0.3)'
+                            }}>
+                                <Text style={{ color: '#4ADE80', fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                    Admin
+                                </Text>
+                            </View>
+                        )}
                     </View>
                 </View>
             </SafeAreaView>
 
             {/* Menu items */}
-            <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 110 }}>
                     <Text style={{ fontSize: 11, fontWeight: '700', color: '#9CA3AF', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 12 }}>
                         Account
@@ -213,7 +232,7 @@ export default function ProfileScreen() {
                         />
                     </View>
                 </ScrollView>
-            </SafeAreaView>
+            </View>
         </View>
     );
 }
