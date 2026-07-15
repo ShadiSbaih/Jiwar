@@ -5,8 +5,8 @@ import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const ACTIVE_COLOR = "#F5A623";
-const INACTIVE_COLOR = "#9CA3AF";
+const ACTIVE_COLOR = "#1C685D";
+const INACTIVE_COLOR = "#6B7280";
 
 export function IOSTabLayout() {
   const isAdmin = userUserStore((state) => state.isAdmin);
@@ -40,37 +40,37 @@ export function IOSTabLayout() {
 }
 
 function AndroidTabLayout() {
-  //   const isAdmin = userUserStore((state) => state.isAdmin);
   const insets = useSafeAreaInsets();
   const isAdmin = userUserStore((state) => state.isAdmin);
-  console.log("is admin?:"+isAdmin)
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: ACTIVE_COLOR,
-        tabBarInactiveTintColor: INACTIVE_COLOR,
+        animation: "fade",
+        tabBarActiveTintColor: "#4ADE80",
+        tabBarInactiveTintColor: "#4A6B60",
         tabBarStyle: {
-          backgroundColor: "#1C1C2E",
+          backgroundColor: "#061F22",
           borderTopWidth: 0,
-          height: 60 + insets.bottom,
+          height: 62 + insets.bottom,
           paddingTop: 8,
           paddingBottom: 10 + insets.bottom,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 12,
+          elevation: 20,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarLabelStyle: { fontSize: 10, fontWeight: "700", letterSpacing: 0.3, marginTop: 3 },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? "home" : "home-outline"}
-              color={color}
-              size={size}
-            />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "home" : "home-outline"} color={color} size={22} />
           ),
         }}
       />
@@ -78,25 +78,17 @@ function AndroidTabLayout() {
         name="explore"
         options={{
           title: "Explore",
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? "search" : "search-outline"}
-              color={color}
-              size={size}
-            />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "search" : "search-outline"} color={color} size={22} />
           ),
         }}
       />
       <Tabs.Screen
         name="favorites"
         options={{
-          title: "Favorites",
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? "heart" : "heart-outline"}
-              color={color}
-              size={size}
-            />
+          title: "Saved",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "heart" : "heart-outline"} color={color} size={22} />
           ),
         }}
       />
@@ -104,12 +96,8 @@ function AndroidTabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? "person" : "person-outline"}
-              color={color}
-              size={size}
-            />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "person" : "person-outline"} color={color} size={22} />
           ),
         }}
       />
@@ -118,12 +106,8 @@ function AndroidTabLayout() {
         options={{
           title: "Add",
           href: isAdmin ? undefined : null,
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? "add-circle" : "add-circle-outline"}
-              color={color}
-              size={size}
-            />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "add-circle" : "add-circle-outline"} color={color} size={22} />
           ),
         }}
       />

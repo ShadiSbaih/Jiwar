@@ -1,5 +1,6 @@
 import FilterModal from '@/components/FilterModal';
 import PropertyCard from '@/components/PropertyCard';
+import { PropertyCardSkeleton } from '@/components/SkeletonCard';
 import { formatPrice } from '@/lib/utils';
 import { searchProperties } from '@/services/properties';
 import { useFilterStore } from '@/store/filterStore';
@@ -7,18 +8,26 @@ import { Property } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 function FilterChip({ label, onClear }: { label: string; onClear: () => void }) {
     return (
-        <View className="flex-row items-center bg-primary/20 border border-primary/40 rounded-full px-3 py-1 gap-1">
-            <Text className="text-primary text-xs font-semibold">{label}</Text>
-            <TouchableOpacity onPress={onClear}>
-                <Ionicons name="close" size={12} color="#B97A14" />
+        <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#E8F3F1',
+            borderRadius: 100,
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            gap: 6,
+        }}>
+            <Text style={{ color: '#1C685D', fontSize: 12, fontWeight: '600' }}>{label}</Text>
+            <TouchableOpacity onPress={onClear} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Ionicons name="close" size={13} color="#1C685D" />
             </TouchableOpacity>
         </View>
-    )
+    );
 }
 
 export default function ExploreScreen() {
@@ -29,47 +38,54 @@ export default function ExploreScreen() {
     const { openFilters } = useLocalSearchParams<{ openFilters?: string }>();
 
     useEffect(() => {
-        if (openFilters === "true") setShowFilters(true)
-    }, [openFilters])
+        if (openFilters === 'true') setShowFilters(true);
+    }, [openFilters]);
 
     const { search, type, bedrooms, minPrice, maxPrice,
-        setSearch, setType, setBedrooms, setMinPrice, setMaxPrice, } = useFilterStore()
+        setSearch, setType, setBedrooms, setMinPrice, setMaxPrice } = useFilterStore();
 
-    const activeFilterCount = [type, bedrooms, minPrice, maxPrice].filter((v) => v != null).length
+    const activeFilterCount = [type, bedrooms, minPrice, maxPrice].filter((v) => v != null).length;
 
     const loadResults = async () => {
-        setIsLoading(true)
-        const data = await searchProperties({
-            search, type, bedrooms, minPrice, maxPrice
-        })
-        setResults(data)
-        setIsLoading(false)
-    }
+        setIsLoading(true);
+        const data = await searchProperties({ search, type, bedrooms, minPrice, maxPrice });
+        setResults(data);
+        setIsLoading(false);
+    };
 
-    useEffect(() => {
-        loadResults()
-    }, [search, type, bedrooms, minPrice, maxPrice])
+    useEffect(() => { loadResults(); }, [search, type, bedrooms, minPrice, maxPrice]);
 
     return (
-        <View className="flex-1 bg-accent-100">
-            <SafeAreaView edges={["top"]} className="bg-accent rounded-b-[28px]">
-                <View className="px-5 pt-3 pb-6">
-                    <Text className="text-white text-2xl font-bold mb-5">Find a home</Text>
+        <View style={{ flex: 1, backgroundColor: '#F5F8F6' }}>
+            {/* Header */}
+            <SafeAreaView edges={['top']} style={{ backgroundColor: '#08383C' }}>
+                <View style={{ paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20 }}>
+                    <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '800', marginBottom: 4 }}>
+                        Explore
+                    </Text>
+                    <Text style={{ color: '#9CA3AF', fontSize: 13, marginBottom: 16 }}>
+                        Find your next home
+                    </Text>
 
                     {/* Search bar */}
-                    <View
-                        className="flex-row items-center bg-white rounded-full pl-4 pr-2 gap-3"
-                        style={{
-                            shadowColor: "#000",
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.15,
-                            shadowRadius: 10,
-                            elevation: 4,
-                        }}
-                    >
-                        <Ionicons name="search" size={18} color="#9CA3AF" />
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 14,
+                        paddingLeft: 14,
+                        paddingRight: 6,
+                        paddingVertical: 4,
+                        gap: 10,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 8,
+                        elevation: 3,
+                    }}>
+                        <Ionicons name="search-outline" size={18} color="#9CA3AF" />
                         <TextInput
-                            className="flex-1 py-3 text-accent"
+                            style={{ flex: 1, color: '#0F1712', fontSize: 14, paddingVertical: 10 }}
                             placeholder="Search by title or city..."
                             placeholderTextColor="#9CA3AF"
                             value={search}
@@ -77,18 +93,36 @@ export default function ExploreScreen() {
                             autoCapitalize="none"
                         />
                         {search.length > 0 && (
-                            <TouchableOpacity onPress={() => setSearch("")}>
+                            <TouchableOpacity onPress={() => setSearch('')}>
                                 <Ionicons name="close-circle" size={18} color="#9CA3AF" />
                             </TouchableOpacity>
                         )}
                         <TouchableOpacity
                             onPress={() => setShowFilters(true)}
-                            className="w-8 h-8 rounded-full flexCenter bg-primary"
+                            style={{
+                                width: 36,
+                                height: 36,
+                                borderRadius: 10,
+                                backgroundColor: '#1C685D',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                position: 'relative',
+                            }}
                         >
-                            <Ionicons name="filter" size={14} color="#1C1C2E" />
+                            <Ionicons name="options-outline" size={16} color="#FFFFFF" />
                             {activeFilterCount > 0 && (
-                                <View className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flexCenter">
-                                    <Text className="text-white text-[9px] font-bold">{activeFilterCount}</Text>
+                                <View style={{
+                                    position: 'absolute',
+                                    top: -4,
+                                    right: -4,
+                                    width: 16,
+                                    height: 16,
+                                    borderRadius: 8,
+                                    backgroundColor: '#EF4444',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    <Text style={{ color: '#FFF', fontSize: 9, fontWeight: '800' }}>{activeFilterCount}</Text>
                                 </View>
                             )}
                         </TouchableOpacity>
@@ -96,14 +130,14 @@ export default function ExploreScreen() {
                 </View>
             </SafeAreaView>
 
-            <SafeAreaView edges={["bottom", "left", "right"]} className="flex-1">
-                {/* Active Filter Chips */}
+            <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1 }}>
+                {/* Active filter chips */}
                 {activeFilterCount > 0 && (
-                    <View className="flex-row flex-wrap gap-2 px-5 pt-4">
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 20, paddingTop: 14, paddingBottom: 4 }}>
                         {type && <FilterChip label={type} onClear={() => setType(null)} />}
                         {bedrooms != null && (
                             <FilterChip
-                                label={bedrooms === 4 ? "4+ beds" : `${bedrooms} bed${bedrooms > 1 ? "s" : ""}`}
+                                label={bedrooms === 4 ? '4+ beds' : `${bedrooms} bed${bedrooms > 1 ? 's' : ''}`}
                                 onClear={() => setBedrooms(null)}
                             />
                         )}
@@ -116,38 +150,53 @@ export default function ExploreScreen() {
                                             ? `From ${formatPrice(minPrice)}`
                                             : `Up to ${formatPrice(maxPrice!)}`
                                 }
-                                onClear={() => {
-                                    setMinPrice(null);
-                                    setMaxPrice(null);
-                                }}
+                                onClear={() => { setMinPrice(null); setMaxPrice(null); }}
                             />
                         )}
                     </View>
                 )}
 
-                {/* Filter Results */}
                 <FlatList
                     data={results}
                     keyExtractor={(item) => item.id}
-                    contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+                    contentContainerStyle={{ padding: 20, paddingBottom: 110 }}
                     showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
                     renderItem={({ item }) => <PropertyCard property={item} />}
                     ListHeaderComponent={
-                        <Text className="text-sm text-gray-400 mb-4">
-                            {isLoading ? "Searching..." : `${results.length} properties found`}
-                        </Text>
+                        !isLoading && results.length > 0 ? (
+                            <Text style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 14 }}>
+                                {results.length} {results.length === 1 ? 'property' : 'properties'} found
+                            </Text>
+                        ) : null
                     }
                     ListEmptyComponent={
-                        !isLoading ? (
-                            <View className="items-center py-20">
-                                <Ionicons name="search-outline" size={48} color="#D1D5DB" />
-                                <Text className="text-gray-400 mt-4 text-base">No properties found</Text>
-                                <Text className="text-gray-300 text-sm mt-1">
-                                    Try a different search or adjust filters
-                                </Text>
+                        isLoading ? (
+                            <View>
+                                <PropertyCardSkeleton />
+                                <PropertyCardSkeleton />
+                                <PropertyCardSkeleton />
                             </View>
                         ) : (
-                            <ActivityIndicator size="large" color="#F5A623" className="py-20" />
+                            <View style={{ alignItems: 'center', paddingVertical: 60 }}>
+                                <View style={{
+                                    width: 72,
+                                    height: 72,
+                                    borderRadius: 36,
+                                    backgroundColor: '#E8F3F1',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginBottom: 16,
+                                }}>
+                                    <Ionicons name="search-outline" size={32} color="#1C685D" />
+                                </View>
+                                <Text style={{ fontSize: 16, fontWeight: '700', color: '#0F1712', marginBottom: 6 }}>
+                                    No results found
+                                </Text>
+                                <Text style={{ fontSize: 13, color: '#9CA3AF', textAlign: 'center', paddingHorizontal: 32 }}>
+                                    Try adjusting your search or removing filters
+                                </Text>
+                            </View>
                         )
                     }
                 />
@@ -155,5 +204,5 @@ export default function ExploreScreen() {
                 <FilterModal visible={showFilters} onClose={() => setShowFilters(false)} />
             </SafeAreaView>
         </View>
-    )
+    );
 }
