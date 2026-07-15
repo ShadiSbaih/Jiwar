@@ -11,17 +11,18 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#F5A623",
-          100: "#FDECC9",
-          200: "#F5C96C",
-          300: "#B97A14",
+          DEFAULT: "#1C685D", // rich-teal — CTAs, active states, icons
+          light:   "#2C9182", // lighter teal for hover states
+          muted:   "#E8F3F1", // pale teal — badge backgrounds
         },
         accent: {
-          DEFAULT: "#1C1C2E",
-          100: "#F8F4EF",
-          200: "#F0EBE3",
-          300: "#9CA3AF",
+          DEFAULT: "#08383C", // deep-pine — headers, tab bar
+          100:     "#F5F8F6", // sage-white — app background
+          200:     "#0D4849", // overlay-teal — dark inputs
+          300:     "#9CA3AF", // muted gray — secondary text
         },
+        dark: "#0F1712",   // near-black for primary text
+        card: "#FFFFFF",   // card surface
       },
     },
   },
