@@ -75,23 +75,6 @@ We deliberately moved away from generic utility classes to implement a strict, s
 
 ---
 
-## ⚖️ React Native vs React — What Changes
-
-If you are transitioning from web development, the component swap is the only real hurdle. Once that mapping is in your head, everything else — state, effects, data fetching, routing — works exactly as it does in standard React.
-
-| Concept             | React (Web)                      | React Native                              | Notes                                                                             |
-| ------------------- | -------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------- |
-| **Container / div** | `<div>`                          | `<View>`                                  | The fundamental layout block. Uses Flexbox by default.                            |
-| **Text**            | `<p>`, `<h1>` – `<h6>`, `<span>` | `<Text>`                                  | Every string must be inside `<Text>`. No bare text nodes.                         |
-| **Image**           | `<img src="…">`                  | `<Image source={{ uri: '…' }} />`         | Requires explicit `width` and `height` or a flex style.                           |
-| **Button**          | `<button>`                       | `<TouchableOpacity>` / `<Pressable>`      | Gives full control over the pressed appearance. `<Button>` exists but is minimal. |
-| **Scrollable list** | `<ul>` + CSS overflow            | `<ScrollView>` / `<FlatList>`             | `FlatList` is preferred for long lists — it virtualizes rows for performance.     |
-| **Text input**      | `<input type="text">`            | `<TextInput>`                             | `onChangeText` instead of `onChange`. No synthetic event object needed.           |
-| **Click / tap**     | `onClick`                        | `onPress`                                 | Works for `TouchableOpacity`, `Pressable`, and most interactive components.       |
-| **Navigation**      | React Router / Next.js           | Expo Router (file-based, same convention) | Same file-based concept as Next.js App Router.                                    |
-| **Safe area**       | Not needed (browser handles it)  | `<SafeAreaView>`                          | Prevents content from sitting under the notch or home indicator.                  |
-
----
 
 ## 🚀 Quick Start & Development
 
@@ -212,17 +195,17 @@ export interface Property {
 }
 ```
 
-### 🌐 Global State (`store/`)
+###  Global State (`store/`)
 Zustand is used for frictionless global state management, avoiding the overhead of heavy prop drilling.
 - **`filterStore.ts`**: Maintains the active search query, property type, bedroom count, and budget constraints (`minPrice`/`maxPrice`).
 - **`userStore.ts`**: Tracks the user session and `isAdmin` flag to dynamically reveal administrative capabilities (like the Add Listing tab).
 
-### 🪝 Hooks (`hooks/`)
+###  Hooks (`hooks/`)
 - **`useSupabase()`**: Intercepts the Clerk JWT and attaches it to all Supabase requests, ensuring operations are evaluated against RLS policies.
 - **`useSavedProperty()`**: Handles the optimistic UI updates and loading states for toggling favorites.
 - **`useUserSync()`**: A background hook that silently upserts the Clerk profile into the PostgreSQL `users` table upon successful login.
 
-### 📦 Services (`services/`)
+###  Services (`services/`)
 Data fetching logic is decoupled from the UI. Screen components merely consume these services.
 - **`properties.ts`**: `fetchProperties()`, `searchProperties(term, type, min, max)`
 - **`saved.ts`**: `checkIfPropertySaved()`, `saveProperty()`, `unsaveProperty()`
@@ -463,12 +446,5 @@ insert into properties (
 
 ---
 
-## 📬 Contact & Support
 
-For questions or support regarding this project, please email: **test.codeatusman@gmail.com**
 
----
-<div align="center">
-  <sub>Built with precision and passion for the luxury real estate market.</sub><br>
-  <sub><b>⭐ If you found this repository helpful, please give it a star!</b></sub>
-</div>
