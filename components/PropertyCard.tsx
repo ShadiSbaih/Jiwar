@@ -3,8 +3,8 @@ import { formatPrice } from '@/lib/utils';
 import { Property } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 export default function PropertyCard({ property, onUnSave, showSave = false }: {
     property: Property
@@ -17,86 +17,146 @@ export default function PropertyCard({ property, onUnSave, showSave = false }: {
         onUnSave,
     );
 
+    const scale = useRef(new Animated.Value(1)).current;
+
+    const onPressIn = () => {
+        Animated.spring(scale, { toValue: 0.975, useNativeDriver: true }).start();
+    };
+    const onPressOut = () => {
+        Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
+    };
+
     return (
-        <TouchableOpacity
+        <TouchableWithoutFeedback
             onPress={() => router.push(`/(root)/property/${property.id}`)}
-            activeOpacity={0.85}
-            className="flex-row items-center bg-white rounded-3xl mb-4 pr-1 gap-3 border border-accent-200"
-            style={{
-                opacity: property.is_sold ? 0.5 : 1,
-            }}
+            onPressIn={onPressIn}
+            onPressOut={onPressOut}
         >
-            {/* Thumbnail */}
-            <Image
-                source={{ uri: property.images[0] }}
-                className="w-36 h-[89px] rounded-2xl"
-                resizeMode="cover"
-            />
+            <Animated.View
+                style={{
+                    opacity: property.is_sold ? 0.6 : 1,
+                    transform: [{ scale }],
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 20,
+                    marginBottom: 16,
+                    overflow: 'hidden',
+                    shadowColor: '#08383C',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 12,
+                    elevation: 3,
+                }}
+            >
+                {/* Top image — 16:9 ratio */}
+                <View style={{ position: 'relative' }}>
+                    <Image
+                        source={{ uri: property.images[0] }}
+                        style={{ width: '100%', height: 190 }}
+                        resizeMode="cover"
+                    />
 
-            {/* Info */}
-            <View className="flex-1 gap-2">
-                <View>
-                    <Text className="text-sm font-bold text-accent" numberOfLines={1}>
-                        {property.title}
-                    </Text>
-                    <View className="flex-row items-center gap-1 mt-0.5">
-                        <Ionicons name="location-outline" size={11} color="#9CA3AF" />
-                        <Text className="text-xs text-gray-400" numberOfLines={1}>
-                            {property.city}
-                        </Text>
-                    </View>
-                </View>
-
-                <View className="flex-row items-center gap-3">
-                    <View className="bg-accent/80 px-2.5 py-1 rounded-full">
-                        <Text className="text-primary font-bold text-xs capitalize">
+                    {/* Type badge — top left */}
+                    <View
+                        style={{
+                            position: 'absolute',
+                            top: 12,
+                            left: 12,
+                            backgroundColor: 'rgba(8,56,60,0.82)',
+                            paddingHorizontal: 10,
+                            paddingVertical: 4,
+                            borderRadius: 100,
+                        }}
+                    >
+                        <Text style={{ color: '#E8F3F1', fontSize: 11, fontWeight: '700', textTransform: 'capitalize', letterSpacing: 0.5 }}>
                             {property.type}
                         </Text>
                     </View>
-                    <View className="bg-primary/20 px-2.5 py-1 rounded-full">
-                        <Text className="text-primary font-bold text-xs">
-                            {formatPrice(property.price)}
-                        </Text>
-                    </View>
+
+                    {/* Save button — top right */}
+                    {showSave && (
+                        <TouchableOpacity
+                            onPress={toggleSave}
+                            disabled={saveLoading}
+                            style={{
+                                position: 'absolute',
+                                top: 10,
+                                right: 10,
+                                width: 34,
+                                height: 34,
+                                borderRadius: 17,
+                                backgroundColor: 'rgba(255,255,255,0.9)',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Ionicons
+                                name={isSaved ? 'heart' : 'heart-outline'}
+                                size={16}
+                                color={isSaved ? '#1C685D' : '#9CA3AF'}
+                            />
+                        </TouchableOpacity>
+                    )}
+
+                    {/* Sold overlay */}
                     {property.is_sold && (
-                        <View className="bg-red-50 px-2 py-0.5 rounded-full">
-                            <Text className="text-red-500 text-[10px] font-semibold">
-                                Sold
-                            </Text>
+                        <View
+                            style={{
+                                position: 'absolute',
+                                top: 12,
+                                right: showSave ? 52 : 12,
+                                backgroundColor: 'rgba(220,38,38,0.88)',
+                                paddingHorizontal: 10,
+                                paddingVertical: 4,
+                                borderRadius: 100,
+                            }}
+                        >
+                            <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '700', letterSpacing: 0.5 }}>SOLD</Text>
                         </View>
                     )}
                 </View>
 
-                <View className="flex-row gap-3">
-                    <View className="flex-row items-center gap-1">
-                        <Ionicons name="bed-outline" size={11} color="#9CA3AF" />
-                        <Text className="text-xs text-gray-400">
-                            {property.bedrooms} bd
+                {/* Card body */}
+                <View style={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: 16 }}>
+                    {/* Title */}
+                    <Text
+                        numberOfLines={1}
+                        style={{ fontSize: 15, fontWeight: '700', color: '#0F1712', marginBottom: 4 }}
+                    >
+                        {property.title}
+                    </Text>
+
+                    {/* Location */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 12 }}>
+                        <Ionicons name="location-outline" size={12} color="#9CA3AF" />
+                        <Text numberOfLines={1} style={{ fontSize: 13, color: '#9CA3AF', flex: 1 }}>
+                            {property.city}
                         </Text>
                     </View>
-                    <View className="flex-row items-center gap-1">
-                        <Ionicons name="expand-outline" size={11} color="#9CA3AF" />
-                        <Text className="text-xs text-gray-400">
-                            {property.area_sqft} ft²
+
+                    {/* Price + specs row */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Text style={{ fontSize: 17, fontWeight: '800', color: '#1C685D' }}>
+                            {formatPrice(property.price)}
                         </Text>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                <Ionicons name="bed-outline" size={13} color="#6B7280" />
+                                <Text style={{ fontSize: 12, color: '#6B7280', fontWeight: '600' }}>
+                                    {property.bedrooms}
+                                </Text>
+                            </View>
+                            <View style={{ width: 1, height: 12, backgroundColor: '#E5E7EB' }} />
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                <Ionicons name="expand-outline" size={13} color="#6B7280" />
+                                <Text style={{ fontSize: 12, color: '#6B7280', fontWeight: '600' }}>
+                                    {property.area_sqft} ft²
+                                </Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
-            </View>
-
-            {/* Save Button */}
-            {showSave && (
-                <TouchableOpacity
-                    onPress={toggleSave}
-                    disabled={saveLoading}
-                    className="w-9 h-9 rounded-full bg-accent-100 flexCenter"
-                >
-                    <Ionicons
-                        name={isSaved ? "heart" : "heart-outline"}
-                        size={16}
-                        color={isSaved ? "#F5A623" : "#9CA3AF"}
-                    />
-                </TouchableOpacity>
-            )}
-        </TouchableOpacity>
-    )
+            </Animated.View>
+        </TouchableWithoutFeedback>
+    );
 }
