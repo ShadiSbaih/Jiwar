@@ -1,13 +1,13 @@
-import { useSavedProperty } from "@/hooks/useSavedProperty";
-import { useSupabase } from "@/hooks/useSupabase";
-import { supabase } from "@/lib/supabase";
-import { formatPrice } from "@/lib/utils";
-import { deleteProperty, markPropertySold } from "@/services/properties";
-import { userUserStore } from "@/store/userStore";
-import { Property } from "@/types";
-import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useSavedProperty } from '@/hooks/useSavedProperty';
+import { useSupabase } from '@/hooks/useSupabase';
+import { supabase } from '@/lib/supabase';
+import { formatPrice } from '@/lib/utils';
+import { deleteProperty, markPropertySold } from '@/services/properties';
+import { userUserStore } from '@/store/userStore';
+import { Property } from '@/types';
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -21,26 +21,35 @@ import {
     Text,
     TouchableOpacity,
     View,
-} from "react-native";
-import ImageViewing from "react-native-image-viewing";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { WebView } from "react-native-webview";
+} from 'react-native';
+import ImageViewing from 'react-native-image-viewing';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { WebView } from 'react-native-webview';
 
-const { width } = Dimensions.get("window");
-const ADMIN_PHONE = "929999999999"; // replace with your WhatsApp number
+const { width } = Dimensions.get('window');
+const ADMIN_PHONE = '929999999999';
 
-// Small pill used in the specs strip — icon + value
-function SpecPill({
-    icon,
-    value,
-}: {
-    icon: keyof typeof Ionicons.glyphMap;
-    value: string;
-}) {
+function SpecPill({ icon, value }: { icon: keyof typeof Ionicons.glyphMap; value: string }) {
     return (
-        <View className="flex-row items-center gap-1.5 bg-white border border-gray-200 px-3 py-2 rounded-full mr-2">
-            <Ionicons name={icon} size={14} color="#F5A623" />
-            <Text className="text-dark text-xs font-semibold">{value}</Text>
+        <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            backgroundColor: '#FFFFFF',
+            borderWidth: 1,
+            borderColor: '#E5E7EB',
+            paddingHorizontal: 14,
+            paddingVertical: 9,
+            borderRadius: 100,
+            marginRight: 8,
+            shadowColor: '#08383C',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.05,
+            shadowRadius: 4,
+            elevation: 1,
+        }}>
+            <Ionicons name={icon} size={14} color="#1C685D" />
+            <Text style={{ color: '#0F1712', fontSize: 13, fontWeight: '600' }}>{value}</Text>
         </View>
     );
 }
@@ -56,46 +65,38 @@ export default function PropertyDetailsScreen() {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isViewerVisible, setIsViewerVisible] = useState(false);
 
-    const { isSaved, saveLoading, toggleSave } = useSavedProperty(id ?? "");
-
+    const { isSaved, saveLoading, toggleSave } = useSavedProperty(id ?? '');
     const authSupabase = useSupabase();
 
-    useEffect(() => {
-        loadProperty();
-    }, [id]);
+    useEffect(() => { loadProperty(); }, [id]);
 
     const loadProperty = async () => {
-        const { data } = await supabase
-            .from("properties")
-            .select("*")
-            .eq("id", id)
-            .single();
+        const { data } = await supabase.from('properties').select('*').eq('id', id).single();
         setProperty(data);
         setIsLoading(false);
     };
 
-
     const handleDelete = () => {
-        Alert.alert("Delete Property", "Are you sure?", [
-            { text: "Cancel", style: "cancel" },
+        Alert.alert('Delete Property', 'This cannot be undone. Are you sure?', [
+            { text: 'Cancel', style: 'cancel' },
             {
-                text: "Delete",
-                style: "destructive",
+                text: 'Delete',
+                style: 'destructive',
                 onPress: async () => {
-                    await deleteProperty(id ?? "", authSupabase);
-                    router.replace("/(root)/(tabs)");
+                    await deleteProperty(id ?? '', authSupabase);
+                    router.replace('/(root)/(tabs)');
                 },
             },
         ]);
     };
 
     const handleMarkSold = () => {
-        Alert.alert("Mark as Sold", "Are you sure?", [
-            { text: "Cancel", style: "cancel" },
+        Alert.alert('Mark as Sold', 'Are you sure?', [
+            { text: 'Cancel', style: 'cancel' },
             {
-                text: "Mark Sold",
+                text: 'Mark Sold',
                 onPress: async () => {
-                    await markPropertySold(id ?? "", authSupabase);
+                    await markPropertySold(id ?? '', authSupabase);
                     setProperty((prev) => (prev ? { ...prev, is_sold: true } : prev));
                 },
             },
@@ -104,9 +105,7 @@ export default function PropertyDetailsScreen() {
 
     const handleContact = () => {
         const message = `Hi! I'm interested in the property: ${property?.title}`;
-        Linking.openURL(
-            `https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(message)}`,
-        );
+        Linking.openURL(`https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(message)}`);
     };
 
     const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -115,48 +114,38 @@ export default function PropertyDetailsScreen() {
 
     if (isLoading) {
         return (
-            <View className="flex-1 flexCenter bg-accent-100">
-                <ActivityIndicator size="large" color="#F5A623" />
+            <View style={{ flex: 1, backgroundColor: '#F5F8F6', alignItems: 'center', justifyContent: 'center' }}>
+                <ActivityIndicator size="large" color="#1C685D" />
             </View>
         );
     }
 
     if (!property) {
         return (
-            <View className="flex-1 flexCenter bg-accent-100">
-                <Text className="text-gray-500">Property not found</Text>
+            <View style={{ flex: 1, backgroundColor: '#F5F8F6', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ color: '#9CA3AF', fontSize: 15 }}>Property not found</Text>
             </View>
         );
     }
 
-    const isLongDesc = (property.description?.length ?? 0) > 150;
-    const displayDesc =
-        isExpanded || !isLongDesc
-            ? property.description
-            : property.description?.slice(0, 150) + "...";
+    const isLongDesc = (property.description?.length ?? 0) > 200;
+    const displayDesc = isExpanded || !isLongDesc
+        ? property.description
+        : property.description?.slice(0, 200) + '...';
 
-    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.003
-        }%2C${property.latitude - 0.003}%2C${property.longitude + 0.003}%2C${property.latitude + 0.003
-        }&layer=mapnik&marker=${property.latitude}%2C${property.longitude}`;
+    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.003}%2C${property.latitude - 0.003}%2C${property.longitude + 0.003}%2C${property.latitude + 0.003}&layer=mapnik&marker=${property.latitude}%2C${property.longitude}`;
 
     return (
-        <View className="flex-1 bg-accent-100">
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 110 }}
-            >
-                {/* Image carousel — title & price overlaid directly on the photo */}
-                <View style={{ opacity: property.is_sold ? 0.5 : 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#F5F8F6' }}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 }}>
+                {/* Hero image carousel */}
+                <View style={{ opacity: property.is_sold ? 0.6 : 1 }}>
                     <FlatList
                         data={property.images}
                         keyExtractor={(_, i) => i.toString()}
                         renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => setIsViewerVisible(true)}>
-                                <Image
-                                    source={{ uri: item }}
-                                    style={{ width, height: 380 }}
-                                    resizeMode="cover"
-                                />
+                            <TouchableOpacity onPress={() => setIsViewerVisible(true)} activeOpacity={0.95}>
+                                <Image source={{ uri: item }} style={{ width, height: 320 }} resizeMode="cover" />
                             </TouchableOpacity>
                         )}
                         horizontal
@@ -166,198 +155,260 @@ export default function PropertyDetailsScreen() {
                         scrollEventThrottle={16}
                     />
 
-                    {/* Image count badge */}
-                    <View className="absolute bottom-32 right-4 bg-black/50 px-3 py-1 rounded-full">
-                        <Text className="text-white text-xs font-medium">
-                            {activeIndex + 1}/{property.images.length}
-                        </Text>
-                    </View>
-
                     {/* Dot indicators */}
                     {property.images.length > 1 && (
-                        <View className="absolute bottom-32 left-0 right-0 flex-row justify-center gap-1">
+                        <View style={{ position: 'absolute', bottom: 16, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 5 }}>
                             {property.images.map((_, i) => (
                                 <View
                                     key={i}
-                                    className={`h-1.5 rounded-full ${i === activeIndex ? "w-8 bg-white" : "w-1.5 bg-white/60"}`}
+                                    style={{
+                                        height: 5,
+                                        width: i === activeIndex ? 20 : 5,
+                                        borderRadius: 3,
+                                        backgroundColor: i === activeIndex ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
+                                    }}
                                 />
                             ))}
                         </View>
                     )}
-                    {/* Bottom gradient-style overlay panel with title/price/badges */}
-                    <View className="absolute bottom-0 left-0 right-0 bg-accent/90 px-5 py-3 rounded-t-[28px]">
-                        <View className="flex-row gap-2 mb-2">
-                            <View className="bg-primary px-2.5 py-0.5 rounded-full">
-                                <Text className="text-dark text-[10px] font-bold capitalize">
-                                    {property.type}
-                                </Text>
-                            </View>
-                            {property.is_featured && (
-                                <View className="bg-white/15 px-2.5 py-0.5 rounded-full">
-                                    <Text className="text-primary text-[10px] font-bold">
-                                        ⭐ Featured
-                                    </Text>
-                                </View>
-                            )}
-                            {property.is_sold && (
-                                <View className="bg-red-500 px-2.5 py-0.5 rounded-full">
-                                    <Text className="text-white text-[10px] font-bold">Sold</Text>
-                                </View>
-                            )}
-                        </View>
-                        <View className="flex-row justify-between">
-                            <Text className="text-white text-xl font-bold" numberOfLines={1}>
-                                {property.title}
-                            </Text>
-                            <Text className="text-primary text-lg font-bold mt-0.5">
-                                {formatPrice(property.price)}
-                            </Text>
-                        </View>
+
+                    {/* Photo count badge */}
+                    <View style={{
+                        position: 'absolute',
+                        bottom: 14,
+                        right: 14,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        paddingHorizontal: 10,
+                        paddingVertical: 4,
+                        borderRadius: 100,
+                    }}>
+                        <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '600' }}>
+                            {activeIndex + 1}/{property.images.length}
+                        </Text>
                     </View>
                 </View>
 
-                {/* Top bar: back + save, floats over the photo */}
-                <SafeAreaView className="absolute top-0 left-0 right-0">
-                    <View className="flex-row flexBetween px-4 pt-2">
+                {/* Floating nav buttons over image */}
+                <SafeAreaView style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 10 }}>
                         <TouchableOpacity
                             onPress={() => router.back()}
-                            className="w-10 h-10 bg-black/50 rounded-full flexCenter"
+                            style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 20,
+                                backgroundColor: 'rgba(0,0,0,0.45)',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
                         >
-                            <Ionicons name="arrow-back" size={20} color="white" />
+                            <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={toggleSave}
                             disabled={saveLoading}
-                            className="w-10 h-10 bg-black/50 rounded-full flexCenter"
+                            style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 20,
+                                backgroundColor: 'rgba(0,0,0,0.45)',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
                         >
                             <Ionicons
-                                name={isSaved ? "heart" : "heart-outline"}
+                                name={isSaved ? 'heart' : 'heart-outline'}
                                 size={20}
-                                color={isSaved ? "#F5A623" : "white"}
+                                color={isSaved ? '#4ADE80' : '#FFFFFF'}
                             />
                         </TouchableOpacity>
                     </View>
                 </SafeAreaView>
 
-                {/* Content */}
-                <View
-                    className="px-5 pt-5"
-                    style={{ opacity: property.is_sold ? 0.6 : 1 }}
-                >
-                    {/* Specs — horizontal scroll of small pills */}
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        className="mb-6"
-                    >
+                {/* Content card — rises over image */}
+                <View style={{
+                    backgroundColor: '#F5F8F6',
+                    borderTopLeftRadius: 24,
+                    borderTopRightRadius: 24,
+                    marginTop: -20,
+                    paddingTop: 24,
+                    paddingHorizontal: 20,
+                    opacity: property.is_sold ? 0.7 : 1,
+                }}>
+                    {/* Badges row */}
+                    <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
+                        <View style={{
+                            backgroundColor: '#1C685D',
+                            paddingHorizontal: 11,
+                            paddingVertical: 4,
+                            borderRadius: 100,
+                        }}>
+                            <Text style={{ color: '#E8F3F1', fontSize: 11, fontWeight: '700', textTransform: 'capitalize', letterSpacing: 0.4 }}>
+                                {property.type}
+                            </Text>
+                        </View>
+                        {property.is_featured && (
+                            <View style={{ backgroundColor: '#E8F3F1', paddingHorizontal: 11, paddingVertical: 4, borderRadius: 100 }}>
+                                <Text style={{ color: '#1C685D', fontSize: 11, fontWeight: '700' }}>⭐ Featured</Text>
+                            </View>
+                        )}
+                        {property.is_sold && (
+                            <View style={{ backgroundColor: '#FEF2F2', paddingHorizontal: 11, paddingVertical: 4, borderRadius: 100 }}>
+                                <Text style={{ color: '#EF4444', fontSize: 11, fontWeight: '700', letterSpacing: 0.4 }}>SOLD</Text>
+                            </View>
+                        )}
+                    </View>
+
+                    {/* Title + price */}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                        <Text style={{ flex: 1, fontSize: 20, fontWeight: '800', color: '#0F1712', lineHeight: 26, marginRight: 12 }}>
+                            {property.title}
+                        </Text>
+                        <Text style={{ fontSize: 20, fontWeight: '800', color: '#1C685D' }}>
+                            {formatPrice(property.price)}
+                        </Text>
+                    </View>
+
+                    {/* Location */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 20 }}>
+                        <Ionicons name="location-outline" size={14} color="#9CA3AF" />
+                        <Text style={{ color: '#9CA3AF', fontSize: 13 }}>{property.address}, {property.city}</Text>
+                    </View>
+
+                    {/* Specs strip */}
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 24 }}>
                         <SpecPill icon="bed-outline" value={`${property.bedrooms} beds`} />
-                        <SpecPill
-                            icon="water-outline"
-                            value={`${property.bathrooms} baths`}
-                        />
-                        <SpecPill
-                            icon="expand-outline"
-                            value={`${property.area_sqft} ft²`}
-                        />
+                        <SpecPill icon="water-outline" value={`${property.bathrooms} baths`} />
+                        <SpecPill icon="expand-outline" value={`${property.area_sqft} ft²`} />
                         <SpecPill icon="home-outline" value={property.type} />
                     </ScrollView>
+
+                    {/* Divider */}
+                    <View style={{ height: 1, backgroundColor: '#E5E7EB', marginBottom: 20 }} />
+
                     {/* Description */}
-                    <Text className="text-base font-bold text-dark mb-2">
-                        About this place
-                    </Text>
-                    <Text className="text-gray-500 text-sm leading-6 mb-1">
-                        {displayDesc}
-                    </Text>
+                    <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F1712', marginBottom: 10 }}>About this property</Text>
+                    <Text style={{ color: '#6B7280', fontSize: 14, lineHeight: 22, marginBottom: 4 }}>{displayDesc}</Text>
                     {isLongDesc && (
                         <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-                            <Text className="text-primary text-sm font-semibold mb-5">
-                                {isExpanded ? "Show less" : "Read more"}
+                            <Text style={{ color: '#1C685D', fontSize: 14, fontWeight: '700', marginBottom: 20 }}>
+                                {isExpanded ? 'Show less' : 'Read more'}
                             </Text>
                         </TouchableOpacity>
                     )}
-                    <View className="mb-5" />
 
-                    {/* Location — compact row, map thumbnail opens full map on tap */}
-                    <Text className="text-base font-bold text-dark mb-2">Location</Text>
+                    <View style={{ marginBottom: 24 }} />
+
+                    {/* Location map */}
+                    <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F1712', marginBottom: 12 }}>Location</Text>
                     <TouchableOpacity
-                        onPress={() =>
-                            router.push({
-                                pathname: "/(root)/property/map",
-                                params: {
-                                    latitude: property.latitude,
-                                    longitude: property.longitude,
-                                    title: property.title,
-                                    address: `${property.address}, ${property.city}`,
-                                },
-                            })
-                        }
+                        onPress={() => router.push({
+                            pathname: '/(root)/property/map',
+                            params: {
+                                latitude: property.latitude,
+                                longitude: property.longitude,
+                                title: property.title,
+                                address: `${property.address}, ${property.city}`,
+                            },
+                        })}
                         activeOpacity={0.9}
-                        className="flex-row items-center bg-white rounded-2xl overflow-hidden mb-6"
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: '#FFFFFF',
+                            borderRadius: 16,
+                            overflow: 'hidden',
+                            marginBottom: 24,
+                            borderWidth: 1,
+                            borderColor: '#E5E7EB',
+                        }}
                     >
-                        <View style={{ width: 90, height: 80 }}>
-                            <WebView
-                                source={{ uri: mapUrl }}
-                                style={{ flex: 1 }}
-                                scrollEnabled={false}
-                                pointerEvents="none"
-                            />
+                        <View style={{ width: 100, height: 88 }}>
+                            <WebView source={{ uri: mapUrl }} style={{ flex: 1 }} scrollEnabled={false} pointerEvents="none" />
                         </View>
-                        <View className="flex-1 px-3">
-                            <Text
-                                className="text-dark text-sm font-semibold"
-                                numberOfLines={1}
-                            >
+                        <View style={{ flex: 1, paddingHorizontal: 14 }}>
+                            <Text style={{ fontSize: 14, fontWeight: '700', color: '#0F1712' }} numberOfLines={1}>
                                 {property.address}
                             </Text>
-                            <Text className="text-gray-400 text-xs" numberOfLines={1}>
+                            <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 2 }} numberOfLines={1}>
                                 {property.city}
                             </Text>
                         </View>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={18}
-                            color="#D1D5DB"
-                            style={{ marginRight: 12 }}
-                        />
+                        <Ionicons name="chevron-forward" size={18} color="#D1D5DB" style={{ marginRight: 14 }} />
                     </TouchableOpacity>
-                    {/* Admin Actions */}
+
+                    {/* Admin actions */}
                     {isAdmin && (
-                        <View className="flex-row gap-3 mb-2">
+                        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 8 }}>
                             {!property.is_sold && (
                                 <TouchableOpacity
                                     onPress={handleMarkSold}
-                                    className="btn flex-1 bg-primary/20"
+                                    style={{
+                                        flex: 1,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: 8,
+                                        backgroundColor: '#E8F3F1',
+                                        paddingVertical: 13,
+                                        borderRadius: 12,
+                                    }}
                                 >
-                                    <Ionicons
-                                        name="checkmark-circle-outline"
-                                        size={18}
-                                        color="#B97A14"
-                                    />
-                                    <Text className="text-primary-dark font-semibold">
-                                        Mark Sold
-                                    </Text>
+                                    <Ionicons name="checkmark-circle-outline" size={18} color="#1C685D" />
+                                    <Text style={{ color: '#1C685D', fontWeight: '700' }}>Mark Sold</Text>
                                 </TouchableOpacity>
                             )}
                             <TouchableOpacity
                                 onPress={handleDelete}
-                                className="btn flex-1 bg-red-500/10"
+                                style={{
+                                    flex: 1,
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: 8,
+                                    backgroundColor: '#FEF2F2',
+                                    paddingVertical: 13,
+                                    borderRadius: 12,
+                                }}
                             >
                                 <Ionicons name="trash-outline" size={18} color="#EF4444" />
-                                <Text className="text-red-500 font-semibold">Delete</Text>
+                                <Text style={{ color: '#EF4444', fontWeight: '700' }}>Delete</Text>
                             </TouchableOpacity>
                         </View>
                     )}
                 </View>
             </ScrollView>
 
-            {/* Sticky contact bar — pinned to the bottom instead of inline in the scroll */}
+            {/* Sticky WhatsApp contact bar */}
             <SafeAreaView
-                edges={["bottom"]}
-                className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-5 pt-3 pb-3"
+                edges={['bottom']}
+                style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: '#FFFFFF',
+                    borderTopWidth: 1,
+                    borderTopColor: '#F3F4F6',
+                    paddingHorizontal: 20,
+                    paddingTop: 12,
+                }}
             >
-                <TouchableOpacity onPress={handleContact} className="btn">
-                    <Ionicons name="logo-whatsapp" size={20} color="#1C1C2E" />
-                    <Text className="text-dark font-bold text-base">Contact Agent</Text>
+                <TouchableOpacity
+                    onPress={handleContact}
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 10,
+                        backgroundColor: '#08383C',
+                        paddingVertical: 15,
+                        borderRadius: 14,
+                        marginBottom: 4,
+                    }}
+                >
+                    <Ionicons name="logo-whatsapp" size={20} color="#4ADE80" />
+                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>Contact Agent</Text>
                 </TouchableOpacity>
             </SafeAreaView>
 

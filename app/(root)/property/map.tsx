@@ -13,48 +13,72 @@ export default function MapScreen() {
         address: string;
     }>();
 
-    const router = useRouter()
-
+    const router = useRouter();
     const lat = parseFloat(latitude);
     const lng = parseFloat(longitude);
 
-    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.001
-        }%2C${lat - 0.001}%2C${lng + 0.001}%2C${lat + 0.001
-        }&layer=mapnik&marker=${lat}%2C${lng}`;
+    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.001}%2C${lat - 0.001}%2C${lng + 0.001}%2C${lat + 0.001}&layer=mapnik&marker=${lat}%2C${lng}`;
 
     return (
-        <View className="flex-1 bg-accent-100">
-            {/* Dark header — same pattern as the rest of the app */}
-            <SafeAreaView edges={["top"]} className="bg-accent rounded-b-[28px] z-50">
-                <View className="flex-row items-center px-4 pt-3 pb-5 gap-3">
+        <View style={{ flex: 1, backgroundColor: '#F5F8F6' }}>
+            {/* Header */}
+            <SafeAreaView edges={["top"]} style={{ backgroundColor: '#08383C', zIndex: 50 }}>
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingHorizontal: 16,
+                    paddingTop: 10,
+                    paddingBottom: 16,
+                    gap: 12,
+                }}>
+                    {/* Back button */}
                     <TouchableOpacity
                         onPress={() => router.back()}
-                        className="w-9 h-9 flexCenter rounded-full bg-white/10"
+                        style={{
+                            width: 38,
+                            height: 38,
+                            borderRadius: 19,
+                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
                     >
-                        <Ionicons name="arrow-back" size={18} color="white" />
+                        <Ionicons name="arrow-back" size={18} color="#FFFFFF" />
                     </TouchableOpacity>
-                    <View className="flex-1">
-                        <Text className="text-white font-semibold text-sm" numberOfLines={1}>
+
+                    {/* Title block */}
+                    <View style={{ flex: 1 }}>
+                        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14 }} numberOfLines={1}>
                             {title}
                         </Text>
-                        <Text className="text-gray-400 text-xs" numberOfLines={1}>
+                        <Text style={{ color: '#9CA3AF', fontSize: 12, marginTop: 2 }} numberOfLines={1}>
                             {address}
                         </Text>
                     </View>
+
+                    {/* Open in Maps CTA */}
                     <TouchableOpacity
                         onPress={() => Linking.openURL(`https://www.google.com/maps?q=${lat},${lng}`)}
-                        className="flex-row items-center gap-1 bg-primary px-3 py-2 rounded-full"
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 6,
+                            backgroundColor: '#1C685D',
+                            paddingHorizontal: 14,
+                            paddingVertical: 9,
+                            borderRadius: 10,
+                        }}
                     >
-                        <Ionicons name="navigate-outline" size={14} color="#1C1C2E" />
-                        <Text className="text-accent text-xs font-semibold">Maps</Text>
+                        <Ionicons name="navigate-outline" size={14} color="#4ADE80" />
+                        <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '700' }}>Directions</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
 
-            {/* Full screen map */}
-            <View className="flex-1 -mt-2 overflow-hidden">
+            {/* Full-screen map */}
+            <View style={{ flex: 1, marginTop: -2 }}>
                 <WebView source={{ uri: mapUrl }} style={{ flex: 1 }} />
             </View>
         </View>
-    )
+    );
 }
