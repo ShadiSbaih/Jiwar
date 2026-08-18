@@ -1,13 +1,15 @@
 import { useAuth, useSignUp } from "@clerk/expo";
+import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator, Image, KeyboardAvoidingView,
+    ActivityIndicator, KeyboardAvoidingView,
     Platform, ScrollView, Text, TouchableOpacity, View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OTPInput from "../../components/OTPInput";
 import { AppTextInput } from "../../components/DesignSystem";
+import AuthBuildingCarousel from "../../components/AuthBuildingCarousel";
 import BrandLockup from "../../components/BrandLockup";
 import { colors, fonts, fontSize, radius, spacing } from "../../constants/theme";
 
@@ -20,6 +22,7 @@ export default function SignUpScreen() {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [verifyCode, setVerifyCode] = useState("");
 
     const isLoading = fetchStatus === "fetching";
@@ -64,13 +67,7 @@ export default function SignUpScreen() {
                     showsVerticalScrollIndicator={false}
                 >
                     {/* ── Hero image ── */}
-                    <View style={{ height: 260 }}>
-                        <Image
-                            source={require("../../assets/images/onboarding.png")}
-                            style={{ width: '100%', height: 260 }}
-                            resizeMode="cover"
-                        />
-                    </View>
+                    <AuthBuildingCarousel height={260} />
 
                     {/* ── Form area — ivory ── */}
                     <SafeAreaView
@@ -176,7 +173,21 @@ export default function SignUpScreen() {
                                         placeholder="Password"
                                         value={password}
                                         onChangeText={setPassword}
-                                        secureTextEntry
+                                        secureTextEntry={!showPassword}
+                                        rightIcon={(
+                                            <TouchableOpacity
+                                                onPress={() => setShowPassword((visible) => !visible)}
+                                                accessibilityRole="button"
+                                                accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                                                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                            >
+                                                <Ionicons
+                                                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                                                    size={20}
+                                                    color={colors.textMuted}
+                                                />
+                                            </TouchableOpacity>
+                                        )}
                                     />
                                     {errors.fields.password && (
                                         <Text style={errorTextStyle}>{errors.fields.password.message}</Text>

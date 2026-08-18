@@ -1,13 +1,15 @@
 import { useSignIn } from "@clerk/expo";
+import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    ActivityIndicator, Image, KeyboardAvoidingView,
+    ActivityIndicator, KeyboardAvoidingView,
     Platform, ScrollView, Text, TouchableOpacity, View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OTPInput from "../../components/OTPInput";
 import { AppTextInput } from "../../components/DesignSystem";
+import AuthBuildingCarousel from "../../components/AuthBuildingCarousel";
 import BrandLockup from "../../components/BrandLockup";
 import { colors, fonts, fontSize, radius, spacing } from "../../constants/theme";
 
@@ -17,6 +19,7 @@ export default function SignInScreen() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [verifyCode, setVerifyCode] = useState("");
 
     const isLoading = fetchStatus === "fetching";
@@ -61,22 +64,7 @@ export default function SignInScreen() {
                     showsVerticalScrollIndicator={false}
                 >
                     {/* ── Hero image — top portion ── */}
-                    <View style={{ position: 'relative', height: 320 }}>
-                        <Image
-                            source={require("../../assets/images/onboarding.png")}
-                            style={{ width: '100%', height: 320 }}
-                            resizeMode="cover"
-                        />
-                        {/* Very subtle bottom fade */}
-                        <View style={{
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            height: 80,
-                            backgroundColor: 'transparent',
-                        }} />
-                    </View>
+                    <AuthBuildingCarousel height={320} />
 
                     {/* ── Form area — ivory, NOT dark panel ── */}
                     <SafeAreaView
@@ -163,7 +151,21 @@ export default function SignInScreen() {
                                         placeholder="Password"
                                         value={password}
                                         onChangeText={setPassword}
-                                        secureTextEntry
+                                        secureTextEntry={!showPassword}
+                                        rightIcon={(
+                                            <TouchableOpacity
+                                                onPress={() => setShowPassword((visible) => !visible)}
+                                                accessibilityRole="button"
+                                                accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                                                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                            >
+                                                <Ionicons
+                                                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                                                    size={20}
+                                                    color={colors.textMuted}
+                                                />
+                                            </TouchableOpacity>
+                                        )}
                                     />
                                     {errors.fields.password && (
                                         <Text style={errorTextStyle}>{errors.fields.password.message}</Text>
@@ -182,7 +184,7 @@ export default function SignInScreen() {
 
                                     <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: spacing.sm }}>
                                         <Text style={{ fontFamily: fonts.body, fontSize: fontSize.body, color: colors.textMuted }}>
-                                            Don't have an account?{' '}
+                                            Don&apos;t have an account?{' '}
                                         </Text>
                                         <Link href="/sign-up">
                                             <Text style={ghostLink}>Sign Up</Text>
