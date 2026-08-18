@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "jiwar",
+    "name": "Jiwar",
     "slug": "jiwar",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,7 +15,7 @@
     "android": {
       "package": "com.jiwar.app",
       "adaptiveIcon": {
-        "backgroundColor": "#08383C",
+        "backgroundColor": "#FAF8F4",
         "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "edgeToEdgeEnabled": true,
@@ -34,9 +34,10 @@
           "image": "./assets/images/splash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#08383C",
+          "backgroundColor": "#FAF8F4",
           "dark": {
-            "backgroundColor": "#08383C"
+            "image": "./assets/images/splash-dark.png",
+            "backgroundColor": "#1C1C1E"
           }
         }
       ],

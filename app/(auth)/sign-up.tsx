@@ -8,6 +8,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import OTPInput from "../../components/OTPInput";
 import { AppTextInput } from "../../components/DesignSystem";
+import BrandLockup from "../../components/BrandLockup";
 import { colors, fonts, fontSize, radius, spacing } from "../../constants/theme";
 
 export default function SignUpScreen() {
@@ -82,15 +83,7 @@ export default function SignUpScreen() {
                             paddingTop: spacing.xxl,
                             gap: spacing.lg,
                         }}>
-                            {/* Wordmark */}
-                            <Text style={{
-                                fontFamily: fonts.displaySB,
-                                fontSize: fontSize.h3,
-                                color: colors.brand,
-                                letterSpacing: -0.3,
-                            }}>
-                                Jiwar
-                            </Text>
+                            <BrandLockup wordmarkColor={colors.brand} markSize={30} />
 
                             {/* Heading */}
                             <View style={{ gap: spacing.xs, marginBottom: spacing.sm }}>

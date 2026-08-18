@@ -2,6 +2,7 @@ import FeaturedCard from '@/components/FeaturedCard';
 import PropertyCard from '@/components/PropertyCard';
 import { FeaturedCardSkeleton, PropertyCardSkeleton } from '@/components/SkeletonCard';
 import { SectionHeader } from '@/components/DesignSystem';
+import BrandLockup from '@/components/BrandLockup';
 import { fetchFeaturedProperties, fetchRecommendedProperties } from '@/services/properties';
 import { Property } from '@/types';
 import { colors, fonts, fontSize, radius, shadows, spacing } from '@/constants/theme';
@@ -52,15 +53,7 @@ export default function HomeScreen() {
                 <View style={{ paddingHorizontal: spacing.pageHorizontal, paddingTop: spacing.sm, paddingBottom: spacing.xl }}>
                     {/* Top row: wordmark + avatar */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.xl }}>
-                        {/* Brand wordmark */}
-                        <Text style={{
-                            fontFamily: fonts.displaySB,
-                            fontSize: 26,
-                            color: colors.textPrimary,
-                            letterSpacing: -0.5,
-                        }}>
-                            Jiwar
-                        </Text>
+                        <BrandLockup />
 
                         {/* Avatar button → Profile */}
                         <TouchableOpacity
