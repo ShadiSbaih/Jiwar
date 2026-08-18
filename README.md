@@ -1,28 +1,23 @@
-<div align="center">
-  <img src="./assets/images/splash.png" alt="Jiwar Logo" width="200" height="200">
-  <h1>Jiwar | Luxury Real Estate</h1>
-  <p><strong>A production-grade, full-stack real estate platform built for scale, performance, and aesthetic excellence.</strong></p>
-  
-  <p>
-    <a href="https://reactnative.dev/"><img src="https://img.shields.io/badge/React_Native-0.76-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" /></a>
-    <a href="https://expo.dev/"><img src="https://img.shields.io/badge/Expo-54-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" /></a>
-    <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" /></a>
-    <a href="https://clerk.com/"><img src="https://img.shields.io/badge/Clerk-Auth-6C47FF?style=for-the-badge&logo=clerk&logoColor=white" alt="Clerk" /></a>
-    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
-  </p>
-</div>
+![Jiwar Logo](./assets/images/splash.png)
+
+# Jiwar | Luxury Real Estate
+
+**A production-grade, full-stack real estate platform built for scale, performance, and aesthetic excellence.**
+
+[![React Native](https://img.shields.io/badge/React_Native-0.81-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/) [![Expo](https://img.shields.io/badge/Expo-54-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/) [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/) [![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?style=for-the-badge&logo=clerk&logoColor=white)](https://clerk.com/) [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
 ---
 
 ## 📖 Overview
 
-Jiwar is a premium, cross-platform mobile application tailored for the luxury real estate market. Engineered with a focus on buttery-smooth interactions and a strict "Emerald & Pine" design system, it delivers an editorial-grade user experience on both iOS and Android.
+Jiwar is a premium, cross-platform mobile application tailored for the luxury real estate market. Engineered with a focus on smooth interactions and a strict Desert Minimal design system, it delivers an editorial-grade user experience on iOS, Android, and the web.
 
 Unlike typical MVP applications, Jiwar implements a rigorous production architecture:
-- **Zero-Friction Auth**: Headless authentication flows via Clerk, fully integrated with Supabase Row Level Security (RLS).
-- **Offline-First Resilience**: Global state hydrated through Zustand with intelligent query caching.
-- **Performant Cartography**: Native-feeling Map integrations via OpenStreetMap and optimized WebViews.
-- **Bespoke Design Token System**: A completely custom inline styling engine, ditching heavy utility frameworks for raw performance and pixel-perfect consistency.
+
+*   **Zero-Friction Auth**: Headless authentication flows via Clerk, fully integrated with Supabase Row Level Security (RLS).
+*   **Offline-First Resilience**: Global state hydrated through Zustand with intelligent query caching.
+*   **Performant Cartography**: Native-feeling Map integrations via OpenStreetMap and optimized WebViews.
+*   **Bespoke Design Token System**: Centralized colors, typography, spacing, radii, shadows, and component primitives for consistent product-wide styling.
 
 ---
 
@@ -30,7 +25,7 @@ Unlike typical MVP applications, Jiwar implements a rigorous production architec
 
 Jiwar follows a strict unidirectional data flow and clean separation of concerns.
 
-```mermaid
+```
 graph TD
     %% Client Tier
     subgraph Client [📱 Client App]
@@ -65,63 +60,79 @@ graph TD
 
 ---
 
-## 🎨 The "Emerald & Pine" Design System
+## 🎨 The "Desert Minimal" Design System
 
 We deliberately moved away from generic utility classes to implement a strict, scalable token system. This guarantees that every shadow, radius, and color perfectly aligns with the luxury brand identity across all OS paradigms.
 
-- **Primary Axis**: Deep Pine (`#08383C`) providing a heavy, grounded corporate feel.
-- **Accents**: Sage White (`#F5F8F6`) for expansive negative space, and Lime (`#4ADE80`) for high-contrast CTAs.
-- **Kinematics**: Global `KeyboardAvoidingView` strategies ensure inputs are never obscured, providing a flawless administrative and registration experience.
+*   **Background**: Warm Ivory (`#FAF8F4`) with White (`#FFFFFF`) and Sand (`#F5F0E8`) surfaces.
+*   **Brand**: Olive (`#6B7A57`) for primary actions, active states, and navigation.
+*   **Text**: Charcoal (`#1C1C1E`) with Stone (`#6F6F6F`, `#8E8E93`) for supporting content.
+*   **Accent**: Muted Gold (`#C9A46A`) reserved for premium and featured moments.
+*   **Typography**: Playfair Display for editorial headings and Inter for interface/body text.
+*   **Kinematics**: Global `KeyboardAvoidingView` strategies ensure inputs are never obscured, providing a flawless administrative and registration experience.
+
+### Brand Assets
+
+The production assets live in `assets/images/` and are wired through `app.json` for iOS, Android, web, and splash-screen builds.
+
+| Asset | Size | Usage |
+| --- | --- | --- |
+| `logo.png` | 1024 × 1024 | Opaque primary app icon for iOS and store submissions |
+| `adaptive-icon.png` | 1024 × 1024 | Transparent Android adaptive foreground |
+| `splash.png` | 432 × 432 | Light splash logo, wordmark, and tagline |
+| `splash-dark.png` | 432 × 432 | Dark-mode splash variant |
+| `favicon.png` | 512 × 512 | Web favicon and in-app emblem |
+| `onboarding.png` | 1200 × 800 | Auth/onboarding architectural hero image |
+
+`components/BrandLockup.tsx` provides the shared emblem + wordmark used by the home, sign-in, and sign-up screens.
+
+To regenerate the deterministic logo variants after changing the source mark or palette:
+
+```
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\generate-brand-assets.ps1
+```
 
 ---
 
-
 ## 🚀 Quick Start & Development
 
-<details>
-<summary><strong>1. Prerequisites</strong></summary>
+**1\. Prerequisites**
 
-- Node.js (v18 or higher)
-- Expo CLI (`npm i -g expo-cli`)
-- EAS CLI (`npm i -g eas-cli`)
-- Clerk & Supabase Accounts
-</details>
+*   Node.js (v20.19.x or higher for Expo SDK 54)
+*   EAS CLI (`npm i -g eas-cli`)
+*   Clerk & Supabase Accounts
 
-<details>
-<summary><strong>2. Environment Configuration</strong></summary>
+**2\. Environment Configuration**
 
 Clone the repository and create your `.env` file at the root:
-```env
+
+```
 EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 EXPO_PUBLIC_SUPABASE_URL=https://...supabase.co
 EXPO_PUBLIC_SUPABASE_KEY=eyJhbG...
 ```
-</details>
 
-<details>
-<summary><strong>3. Local Development</strong></summary>
+**3\. Local Development**
 
-```bash
+```
 npm install
 npx expo start -c
 ```
-</details>
 
-<details>
-<summary><strong>4. Compiling Native Binaries (APK / IPA)</strong></summary>
+**4\. Compiling Native Binaries (APK / IPA)**
 
 Jiwar is fully configured for Expo Application Services (EAS).
-```bash
+
+```
 # Compile a standalone Android APK
 eas build --profile preview --platform android --local
 ```
-</details>
 
 ---
 
 ## 📂 Project Structure & Anatomy
 
-```text
+```
 jiwar/
 ├── app/
 │   ├── _layout.tsx              ← Root wrapper (Clerk auth setup)
@@ -162,6 +173,9 @@ jiwar/
 │   └── userStore.ts             ← User/admin state (Zustand)
 ├── types/
 │   └── index.ts                 ← Shared interfaces & types
+├── assets/images/               ← App icons, splash assets, favicon, auth hero
+├── scripts/
+│   └── generate-brand-assets.ps1 ← Rebuilds palette-accurate brand variants
 └── app.json                     ← Expo config
 ```
 
@@ -170,9 +184,10 @@ jiwar/
 ## 🧩 Architectural Breakdown
 
 ### 🔑 Types (`types/index.ts`)
+
 Shared domain types used across screens, stores, and constants to ensure strict type safety.
 
-```ts
+```
 export type PropertyTypeValue = "apartment" | "house" | "villa" | "studio" | "townhouse" | "penthouse" | "plot" | "flat" | "other";
 
 export interface Property {
@@ -195,35 +210,42 @@ export interface Property {
 }
 ```
 
-###  Global State (`store/`)
+### Global State (`store/`)
+
 Zustand is used for frictionless global state management, avoiding the overhead of heavy prop drilling.
-- **`filterStore.ts`**: Maintains the active search query, property type, bedroom count, and budget constraints (`minPrice`/`maxPrice`).
-- **`userStore.ts`**: Tracks the user session and `isAdmin` flag to dynamically reveal administrative capabilities (like the Add Listing tab).
 
-###  Hooks (`hooks/`)
-- **`useSupabase()`**: Intercepts the Clerk JWT and attaches it to all Supabase requests, ensuring operations are evaluated against RLS policies.
-- **`useSavedProperty()`**: Handles the optimistic UI updates and loading states for toggling favorites.
-- **`useUserSync()`**: A background hook that silently upserts the Clerk profile into the PostgreSQL `users` table upon successful login.
+*   `**filterStore.ts**`: Maintains the active search query, property type, bedroom count, and budget constraints (`minPrice`/`maxPrice`).
+*   `**userStore.ts**`: Tracks the user session and `isAdmin` flag to dynamically reveal administrative capabilities (like the Add Listing tab).
 
-###  Services (`services/`)
+### Hooks (`hooks/`)
+
+*   `**useSupabase()**`: Intercepts the Clerk JWT and attaches it to all Supabase requests, ensuring operations are evaluated against RLS policies.
+*   `**useSavedProperty()**`: Handles the optimistic UI updates and loading states for toggling favorites.
+*   `**useUserSync()**`: A background hook that silently upserts the Clerk profile into the PostgreSQL `users` table upon successful login.
+
+### Services (`services/`)
+
 Data fetching logic is decoupled from the UI. Screen components merely consume these services.
-- **`properties.ts`**: `fetchProperties()`, `searchProperties(term, type, min, max)`
-- **`saved.ts`**: `checkIfPropertySaved()`, `saveProperty()`, `unsaveProperty()`
+
+*   `**properties.ts**`: `fetchProperties()`, `searchProperties(term, type, min, max)`
+*   `**saved.ts**`: `checkIfPropertySaved()`, `saveProperty()`, `unsaveProperty()`
 
 ---
 
 ## 🔄 App Workflow & Data Flow
 
-### 1. Authentication
-```text
+### 1\. Authentication
+
+```
 sign-in.tsx → Clerk handles login
   → Stores token securely (expo-secure-store)
   → Redirects to (root)/(tabs)
   → useUserSync() runs → upserts user row in Supabase
 ```
 
-### 2. Exploring & Filtering
-```text
+### 2\. Exploring & Filtering
+
+```
 explore.tsx
   → TextInput updates filterStore.setSearch()
   → useEffect watches [search, type, bedrooms, minPrice, maxPrice]
@@ -232,8 +254,9 @@ explore.tsx
   → Active filters shown as removable chips below the search bar
 ```
 
-### 3. Admin: Add Listing
-```text
+### 3\. Admin: Add Listing
+
+```
 add.tsx (only visible if isAdmin = true in userStore)
   → Form: title, description, price, type, beds, baths, area, address, coords
   → Images uploaded to Supabase Storage → URLs stored in images[]
@@ -248,10 +271,9 @@ add.tsx (only visible if isAdmin = true in userStore)
 
 Data integrity and privacy are enforced strictly at the database level using PostgreSQL Row Level Security (RLS). Run all SQL below in your Supabase SQL editor to scaffold the backend.
 
-<details>
-<summary><strong>1. Users Table & RLS Policies</strong></summary>
+**1\. Users Table & RLS Policies**
 
-```sql
+```
 create table users (
   id uuid default gen_random_uuid() primary key,
   clerk_id text unique not null,
@@ -268,12 +290,10 @@ create policy "Users can insert own row" on users for insert with check (clerk_i
 create policy "Users can read own row" on users for select using (clerk_id = auth.jwt()->>'sub');
 create policy "Users can update own row" on users for update using (clerk_id = auth.jwt()->>'sub');
 ```
-</details>
 
-<details>
-<summary><strong>2. Properties Table & RLS Policies</strong></summary>
+**2\. Properties Table & RLS Policies**
 
-```sql
+```
 create table properties (
   id uuid default gen_random_uuid() primary key,
   title text not null,
@@ -296,12 +316,10 @@ create table properties (
 alter table properties enable row level security;
 create policy "Properties are publicly readable" on properties for select using (true);
 ```
-</details>
 
-<details>
-<summary><strong>3. Saved Properties Table & RLS Policies</strong></summary>
+**3\. Saved Properties Table & RLS Policies**
 
-```sql
+```
 create table saved_properties (
   id uuid default gen_random_uuid() primary key,
   user_clerk_id text not null references users(clerk_id) on delete cascade,
@@ -315,12 +333,10 @@ create policy "Users can read own saved properties" on saved_properties for sele
 create policy "Users can insert saved properties" on saved_properties for insert with check (user_clerk_id = auth.jwt()->>'sub');
 create policy "Users can delete own saved properties" on saved_properties for delete using (user_clerk_id = auth.jwt()->>'sub');
 ```
-</details>
 
-<details>
-<summary><strong>4. Admin Configuration & Storage Bucket</strong></summary>
+**4\. Admin Configuration & Storage Bucket**
 
-```sql
+```
 insert into storage.buckets (id, name, public) values ('property-images', 'property-images', true);
 create policy "Public can read property images" on storage.objects for select using (bucket_id = 'property-images');
 
@@ -332,14 +348,12 @@ create policy "Admin can upload property images" on storage.objects for insert w
 -- Make yourself an admin (replace with your Clerk ID):
 -- update users set is_admin = true where clerk_id = 'user_xxxxxxxxxxxxxxxx';
 ```
-</details>
 
-<details>
-<summary><strong>5. Seed Properties Data</strong></summary>
+**5\. Seed Properties Data**
 
 All seed images are Unsplash photos of homes, apartments, villas, and commercial buildings.
 
-```sql
+```
 insert into properties (
   title, description, price, type, bedrooms, bathrooms,
   area_sqft, address, city, latitude, longitude, images, is_featured
@@ -396,55 +410,51 @@ insert into properties (
   true
 );
 ```
-</details>
 
 ---
 
 ## 📌 Key Concepts for Beginners
 
-| Concept                  | What it means                                                 |
-| ------------------------ | ------------------------------------------------------------- |
-| File-based routing       | Each file = a screen. No manual route config needed.          |
-| Dynamic routes           | `[id].tsx` becomes `/property/123`, `/property/456`, etc.     |
-| Route groups             | `(auth)` organises files without affecting the URL path       |
-| Components               | Reusable UI blocks (like functions that return UI)            |
-| Hooks                    | Functions that add state or behaviour to components           |
-| Zustand store            | Global data shared across any component without prop drilling |
-| TypeScript               | JavaScript with type hints — catches bugs before runtime      |
-| RLS (Row Level Security) | Supabase checks who you are before allowing DB operations     |
-| JWT                      | Clerk login token — passed to Supabase to prove your identity |
+| Concept | What it means |
+| --- | --- |
+| File-based routing | Each file = a screen. No manual route config needed. |
+| Dynamic routes | `[id].tsx` becomes `/property/123`, `/property/456`, etc. |
+| Route groups | `(auth)` organises files without affecting the URL path |
+| Components | Reusable UI blocks (like functions that return UI) |
+| Hooks | Functions that add state or behaviour to components |
+| Zustand store | Global data shared across any component without prop drilling |
+| TypeScript | JavaScript with type hints — catches bugs before runtime |
+| RLS (Row Level Security) | Supabase checks who you are before allowing DB operations |
+| JWT | Clerk login token — passed to Supabase to prove your identity |
 
 ---
 
 ## ✅ Feature Checklist
 
-- [x] Secure Email/Password Authentication (Clerk)
-- [x] OTP email verification on signup
-- [x] JWT Integration with Supabase Row Level Security (RLS)
-- [x] Premium "Emerald & Pine" UI Redesign (Custom Inline Tokens)
-- [x] Property listing with image carousel & deep linking
-- [x] Featured properties horizontal scroll
-- [x] Full-text search by title and city
-- [x] Advanced Filters (Type, Bedrooms, Min/Max Price)
-- [x] Global State Management (Zustand)
-- [x] User Favorites / Saved Properties
-- [x] Embedded Map Preview (OpenStreetMap)
-- [x] Full-screen map view & WhatsApp contact integrations
-- [x] Admin Listing Upload (with Image Storage)
-- [x] Admin Dashboard capabilities (mark as sold, delete listings)
-- [x] Robust Keyboard Avoidance across all platforms
-- [x] Custom Android Adaptive Icons & Splash Screens
+*   Secure Email/Password Authentication (Clerk)
+*   OTP email verification on signup
+*   JWT Integration with Supabase Row Level Security (RLS)
+*   Premium "Desert Minimal" UI system (centralized design tokens)
+*   Property listing with image carousel & deep linking
+*   Featured properties horizontal scroll
+*   Full-text search by title and city
+*   Advanced Filters (Type, Bedrooms, Min/Max Price)
+*   Global State Management (Zustand)
+*   User Favorites / Saved Properties
+*   Embedded Map Preview (OpenStreetMap)
+*   Full-screen map view & WhatsApp contact integrations
+*   Admin Listing Upload (with Image Storage)
+*   Admin Dashboard capabilities (mark as sold, delete listings)
+*   Robust Keyboard Avoidance across all platforms
+*   Custom Android Adaptive Icons & Splash Screens
 
 ---
 
 ## 📈 Roadmap & Future Optimizations
 
-- [ ] **Edge Caching**: Move heavy property queries to Supabase Edge Functions.
-- [ ] **Image Optimization**: Implement Cloudflare Image Resizing to dynamically deliver `.webp` based on device DPI.
-- [ ] **Offline Maps**: Cache OSM tiles for low-connectivity environments.
-- [ ] **Biometric Auth**: Add native FaceID/TouchID integration to the Clerk flow.
+*   **Edge Caching**: Move heavy property queries to Supabase Edge Functions.
+*   **Image Optimization**: Implement Cloudflare Image Resizing to dynamically deliver `.webp` based on device DPI.
+*   **Offline Maps**: Cache OSM tiles for low-connectivity environments.
+*   **Biometric Auth**: Add native FaceID/TouchID integration to the Clerk flow.
 
 ---
-
-
-
