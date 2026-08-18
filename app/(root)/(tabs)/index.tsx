@@ -93,23 +93,28 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Greeting — Playfair Display */}
-                    <Text style={{
-                        fontFamily: fonts.displayI,
-                        fontSize: fontSize.h2,
-                        color: colors.textPrimary,
-                        marginBottom: 3,
-                    }}>
-                        {greeting()},
-                    </Text>
-                    <Text style={{
-                        fontFamily: fonts.display,
-                        fontSize: fontSize.h1,
-                        color: colors.textPrimary,
+                    {/* Greeting — compact single-row Inter lockup */}
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'baseline',
+                        gap: spacing.xs,
                         marginBottom: spacing.xl,
                     }}>
-                        {user?.firstName ?? 'there'}.
-                    </Text>
+                        <Text style={{
+                            fontFamily: fonts.bodyM,
+                            fontSize: fontSize.bodyLg,
+                            color: colors.textSecondary,
+                        }}>
+                            {greeting()},
+                        </Text>
+                        <Text style={{
+                            fontFamily: fonts.bodySB,
+                            fontSize: fontSize.title,
+                            color: colors.textPrimary,
+                        }}>
+                            {user?.firstName ?? 'there'}
+                        </Text>
+                    </View>
 
                     {/* Search bar */}
                     <TouchableOpacity
