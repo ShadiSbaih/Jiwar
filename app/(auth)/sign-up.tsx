@@ -3,48 +3,12 @@ import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
     ActivityIndicator, Image, KeyboardAvoidingView,
-    Platform, ScrollView, Text, TextInput, TouchableOpacity, View,
+    Platform, ScrollView, Text, TouchableOpacity, View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OTPInput from "../../components/OTPInput";
-
-const C = {
-    pine:     '#08383C',
-    teal:     '#1C685D',
-    green:    '#4ADE80',
-    white:    '#FFFFFF',
-    border:   'rgba(255,255,255,0.12)',
-    muted:    'rgba(255,255,255,0.45)',
-    inputBg:  'rgba(255,255,255,0.08)',
-};
-
-function AuthInput({
-    placeholder, value, onChangeText, secureTextEntry = false,
-    keyboardType = 'default', autoCapitalize = 'none', style = {},
-}: any) {
-    return (
-        <TextInput
-            placeholder={placeholder}
-            placeholderTextColor={C.muted}
-            value={value}
-            onChangeText={onChangeText}
-            secureTextEntry={secureTextEntry}
-            keyboardType={keyboardType}
-            autoCapitalize={autoCapitalize}
-            style={{
-                backgroundColor: C.inputBg,
-                borderWidth: 1,
-                borderColor: C.border,
-                borderRadius: 14,
-                paddingHorizontal: 16,
-                paddingVertical: 15,
-                color: C.white,
-                fontSize: 15,
-                ...style,
-            }}
-        />
-    );
-}
+import { AppTextInput } from "../../components/DesignSystem";
+import { colors, fonts, fontSize, radius, spacing } from "../../constants/theme";
 
 export default function SignUpScreen() {
     const { signUp, errors, fetchStatus } = useSignUp();
@@ -87,165 +51,199 @@ export default function SignUpScreen() {
     if (signUp.status === "complete" || isSignedIn) return null;
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: C.pine }} edges={["bottom", "left", "right"]}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
             <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-        >
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+            >
                 <ScrollView
                     contentContainerStyle={{ flexGrow: 1 }}
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
-
-                    {/* Hero image */}
-                    <Image
-                        source={require("../../assets/images/onboarding.png")}
-                        style={{ width: '100%', height: 340 }}
-                        resizeMode="cover"
-                    />
-
-                    {/* Card sheet */}
-                    <View style={{
-                        flex: 1,
-                        backgroundColor: C.pine,
-                        borderTopLeftRadius: 28,
-                        borderTopRightRadius: 28,
-                        marginTop: -24,
-                        paddingHorizontal: 28,
-                        paddingTop: 32,
-                        gap: 14,
-                    }}>
-                        {/* Header */}
-                        <View style={{ marginBottom: 4 }}>
-                            <Text style={{ color: C.green, fontSize: 11, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase' }}>
-                                {needsVerification ? "Step 2 of 2" : "Step 1 of 2"}
-                            </Text>
-                            <Text style={{ color: C.white, fontSize: 26, fontWeight: '800', marginTop: 4 }}>
-                                {needsVerification ? "Verify your email" : "Create account"}
-                            </Text>
-                            <Text style={{ color: C.muted, fontSize: 14, marginTop: 6 }}>
-                                {needsVerification ? `We sent a code to ${email}` : "Your dream home is one step away."}
-                            </Text>
-                        </View>
-
-                        {needsVerification ? (
-                            <>
-                                <OTPInput
-                                    code={verifyCode}
-                                    setCode={setVerifyCode}
-                                    maximumLength={6}
-                                />
-                                {errors.fields.code && (
-                                    <Text style={{ color: '#F87171', fontSize: 12, marginTop: -6 }}>{errors.fields.code.message}</Text>
-                                )}
-                                <TouchableOpacity
-                                    onPress={handleVerifyCode}
-                                    disabled={isLoading}
-                                    style={{
-                                        backgroundColor: C.teal,
-                                        borderRadius: 14,
-                                        paddingVertical: 16,
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginTop: 4,
-                                        shadowColor: C.teal,
-                                        shadowOffset: { width: 0, height: 4 },
-                                        shadowOpacity: 0.4,
-                                        shadowRadius: 10,
-                                        elevation: 6,
-                                    }}
-                                >
-                                    {isLoading
-                                        ? <ActivityIndicator color={C.white} />
-                                        : <Text style={{ color: C.white, fontWeight: '800', fontSize: 16 }}>Confirm & Continue</Text>
-                                    }
-                                </TouchableOpacity>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 24, marginTop: 4 }}>
-                                    <TouchableOpacity onPress={() => signUp.verifications.sendEmailCode()}>
-                                        <Text style={{ color: C.green, fontSize: 14, fontWeight: '600' }}>Resend code</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => signUp.reset()}>
-                                        <Text style={{ color: C.muted, fontSize: 14 }}>Start over</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </>
-                        ) : (
-                            <>
-                                {/* Name row */}
-                                <View style={{ flexDirection: 'row', gap: 12 }}>
-                                    <AuthInput
-                                        placeholder="First name"
-                                        value={firstName}
-                                        onChangeText={setFirstName}
-                                        autoCapitalize="words"
-                                        style={{ flex: 1 }}
-                                    />
-                                    <AuthInput
-                                        placeholder="Last name"
-                                        value={lastName}
-                                        onChangeText={setLastName}
-                                        autoCapitalize="words"
-                                        style={{ flex: 1 }}
-                                    />
-                                </View>
-
-                                <AuthInput
-                                    placeholder="Email address"
-                                    value={email}
-                                    onChangeText={setEmail}
-                                    keyboardType="email-address"
-                                />
-                                {errors.fields.emailAddress && (
-                                    <Text style={{ color: '#F87171', fontSize: 12, marginTop: -6 }}>{errors.fields.emailAddress.message}</Text>
-                                )}
-
-                                <AuthInput
-                                    placeholder="Password"
-                                    value={password}
-                                    onChangeText={setPassword}
-                                    secureTextEntry
-                                />
-                                {errors.fields.password && (
-                                    <Text style={{ color: '#F87171', fontSize: 12, marginTop: -6 }}>{errors.fields.password.message}</Text>
-                                )}
-
-                                <TouchableOpacity
-                                    onPress={handleRegister}
-                                    disabled={isLoading}
-                                    style={{
-                                        backgroundColor: C.teal,
-                                        borderRadius: 14,
-                                        paddingVertical: 16,
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginTop: 4,
-                                        shadowColor: C.teal,
-                                        shadowOffset: { width: 0, height: 4 },
-                                        shadowOpacity: 0.4,
-                                        shadowRadius: 10,
-                                        elevation: 6,
-                                    }}
-                                >
-                                    {isLoading
-                                        ? <ActivityIndicator color={C.white} />
-                                        : <Text style={{ color: C.white, fontWeight: '800', fontSize: 16 }}>Create Account</Text>
-                                    }
-                                </TouchableOpacity>
-
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 6 }}>
-                                    <Text style={{ color: C.muted, fontSize: 14 }}>Already have an account? </Text>
-                                    <Link href="/sign-in">
-                                        <Text style={{ color: C.green, fontWeight: '700', fontSize: 14 }}>Sign In</Text>
-                                    </Link>
-                                </View>
-                                <View nativeID="clerk-captcha" />
-                            </>
-                        )}
+                    {/* ── Hero image ── */}
+                    <View style={{ height: 260 }}>
+                        <Image
+                            source={require("../../assets/images/onboarding.png")}
+                            style={{ width: '100%', height: 260 }}
+                            resizeMode="cover"
+                        />
                     </View>
+
+                    {/* ── Form area — ivory ── */}
+                    <SafeAreaView
+                        edges={["bottom", "left", "right"]}
+                        style={{ flex: 1, backgroundColor: colors.background }}
+                    >
+                        <View style={{
+                            flex: 1,
+                            paddingHorizontal: spacing.pageHorizontal + spacing.sm,
+                            paddingTop: spacing.xxl,
+                            gap: spacing.lg,
+                        }}>
+                            {/* Wordmark */}
+                            <Text style={{
+                                fontFamily: fonts.displaySB,
+                                fontSize: fontSize.h3,
+                                color: colors.brand,
+                                letterSpacing: -0.3,
+                            }}>
+                                Jiwar
+                            </Text>
+
+                            {/* Heading */}
+                            <View style={{ gap: spacing.xs, marginBottom: spacing.sm }}>
+                                <Text style={{
+                                    fontFamily: fonts.displayI,
+                                    fontSize: fontSize.h2,
+                                    color: colors.textPrimary,
+                                }}>
+                                    {needsVerification ? "Verify your email." : "Create account."}
+                                </Text>
+                                <Text style={{
+                                    fontFamily: fonts.body,
+                                    fontSize: fontSize.body,
+                                    color: colors.textMuted,
+                                    lineHeight: 22,
+                                }}>
+                                    {needsVerification
+                                        ? `We sent a code to ${email}`
+                                        : "Your next home is one step away."}
+                                </Text>
+                            </View>
+
+                            {needsVerification ? (
+                                <>
+                                    <OTPInput
+                                        code={verifyCode}
+                                        setCode={setVerifyCode}
+                                        maximumLength={6}
+                                    />
+                                    {errors.fields.code && (
+                                        <Text style={errorTextStyle}>{errors.fields.code.message}</Text>
+                                    )}
+
+                                    <TouchableOpacity
+                                        onPress={handleVerifyCode}
+                                        disabled={isLoading}
+                                        style={primaryButton(isLoading)}
+                                    >
+                                        {isLoading
+                                            ? <ActivityIndicator color={colors.surface} />
+                                            : <Text style={primaryButtonLabel}>Confirm & Continue</Text>
+                                        }
+                                    </TouchableOpacity>
+
+                                    <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.xxl, marginTop: spacing.sm }}>
+                                        <TouchableOpacity onPress={() => signUp.verifications.sendEmailCode()}>
+                                            <Text style={ghostLink}>Resend code</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => signUp.reset()}>
+                                            <Text style={{ fontFamily: fonts.body, fontSize: fontSize.body, color: colors.textMuted }}>
+                                                Start over
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </>
+                            ) : (
+                                <>
+                                    {/* Name row */}
+                                    <View style={{ flexDirection: 'row', gap: spacing.md }}>
+                                        <View style={{ flex: 1 }}>
+                                            <AppTextInput
+                                                placeholder="First name"
+                                                value={firstName}
+                                                onChangeText={setFirstName}
+                                                autoCapitalize="words"
+                                            />
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <AppTextInput
+                                                placeholder="Last name"
+                                                value={lastName}
+                                                onChangeText={setLastName}
+                                                autoCapitalize="words"
+                                            />
+                                        </View>
+                                    </View>
+
+                                    <AppTextInput
+                                        placeholder="Email address"
+                                        value={email}
+                                        onChangeText={setEmail}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                    />
+                                    {errors.fields.emailAddress && (
+                                        <Text style={errorTextStyle}>{errors.fields.emailAddress.message}</Text>
+                                    )}
+
+                                    <AppTextInput
+                                        placeholder="Password"
+                                        value={password}
+                                        onChangeText={setPassword}
+                                        secureTextEntry
+                                    />
+                                    {errors.fields.password && (
+                                        <Text style={errorTextStyle}>{errors.fields.password.message}</Text>
+                                    )}
+
+                                    <TouchableOpacity
+                                        onPress={handleRegister}
+                                        disabled={isLoading}
+                                        style={primaryButton(isLoading)}
+                                    >
+                                        {isLoading
+                                            ? <ActivityIndicator color={colors.surface} />
+                                            : <Text style={primaryButtonLabel}>Create Account</Text>
+                                        }
+                                    </TouchableOpacity>
+
+                                    <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: spacing.sm }}>
+                                        <Text style={{ fontFamily: fonts.body, fontSize: fontSize.body, color: colors.textMuted }}>
+                                            Already have an account?{' '}
+                                        </Text>
+                                        <Link href="/sign-in">
+                                            <Text style={ghostLink}>Sign In</Text>
+                                        </Link>
+                                    </View>
+                                    <View nativeID="clerk-captcha" />
+                                </>
+                            )}
+                        </View>
+                    </SafeAreaView>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </View>
     );
 }
+
+// ─── Shared local styles ──────────────────────────────────────────────────────
+const primaryButton = (disabled: boolean) => ({
+    height: 50,
+    backgroundColor: disabled ? colors.brand + '80' : colors.brand,
+    borderRadius: radius.md,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    marginTop: spacing.sm,
+});
+
+const primaryButtonLabel = {
+    fontFamily: fonts.bodySB,
+    fontSize: fontSize.bodyLg,
+    color: colors.surface,
+};
+
+const ghostLink = {
+    fontFamily: fonts.bodySB,
+    fontSize: fontSize.body,
+    color: colors.brand,
+};
+
+const errorTextStyle = {
+    fontFamily: fonts.body,
+    fontSize: fontSize.caption,
+    color: colors.error,
+    marginTop: -spacing.sm,
+};

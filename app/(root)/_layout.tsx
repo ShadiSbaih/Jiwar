@@ -3,6 +3,7 @@ import { useAuth } from "@clerk/expo";
 import { Redirect, Stack } from "expo-router";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
+import { colors } from "@/constants/theme";
 
 export default function RootLayout() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -11,8 +12,8 @@ export default function RootLayout() {
 
   if (!isLoaded || isSyncing) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#08383C", justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#4ADE80" />
+      <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={colors.brand} />
       </View>
     );
   }

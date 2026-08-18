@@ -5,6 +5,7 @@ import { formatPrice } from '@/lib/utils';
 import { deleteProperty, markPropertySold } from '@/services/properties';
 import { userUserStore } from '@/store/userStore';
 import { Property } from '@/types';
+import { colors, fonts, fontSize, radius, spacing } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -17,43 +18,42 @@ import {
     Linking,
     NativeScrollEvent,
     NativeSyntheticEvent,
+    Platform,
     ScrollView,
     Text,
     TouchableOpacity,
     View,
 } from 'react-native';
-import ImageViewing from 'react-native-image-viewing';
+import ImageViewerModal from '@/components/ImageViewerModal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 const { width } = Dimensions.get('window');
 const ADMIN_PHONE = '929999999999';
 
-function SpecPill({ icon, value }: { icon: keyof typeof Ionicons.glyphMap; value: string }) {
+// ─── Key fact item ─────────────────────────────────────────────────────────────
+function FactItem({ icon, label }: { icon: keyof typeof Ionicons.glyphMap; label: string }) {
     return (
-        <View style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 6,
-            backgroundColor: '#FFFFFF',
-            borderWidth: 1,
-            borderColor: '#E5E7EB',
-            paddingHorizontal: 14,
-            paddingVertical: 9,
-            borderRadius: 100,
-            marginRight: 8,
-            shadowColor: '#08383C',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.05,
-            shadowRadius: 4,
-            elevation: 1,
-        }}>
-            <Ionicons name={icon} size={14} color="#1C685D" />
-            <Text style={{ color: '#0F1712', fontSize: 13, fontWeight: '600' }}>{value}</Text>
+        <View style={{ alignItems: 'center', gap: spacing.xs }}>
+            <Ionicons name={icon} size={18} color={colors.textMuted} />
+            <Text style={{
+                fontFamily: fonts.bodyM,
+                fontSize: fontSize.caption,
+                color: colors.textSecondary,
+            }}>
+                {label}
+            </Text>
         </View>
     );
 }
 
+function FactDivider() {
+    return (
+        <View style={{ width: 1, height: 28, backgroundColor: colors.border }} />
+    );
+}
+
+// ─── Main screen ──────────────────────────────────────────────────────────────
 export default function PropertyDetailsScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
@@ -114,16 +114,18 @@ export default function PropertyDetailsScreen() {
 
     if (isLoading) {
         return (
-            <View style={{ flex: 1, backgroundColor: '#F5F8F6', alignItems: 'center', justifyContent: 'center' }}>
-                <ActivityIndicator size="large" color="#1C685D" />
+            <View style={{ flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }}>
+                <ActivityIndicator size="large" color={colors.brand} />
             </View>
         );
     }
 
     if (!property) {
         return (
-            <View style={{ flex: 1, backgroundColor: '#F5F8F6', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: '#9CA3AF', fontSize: 15 }}>Property not found</Text>
+            <View style={{ flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: fonts.body, color: colors.textMuted, fontSize: fontSize.body }}>
+                    Property not found
+                </Text>
             </View>
         );
     }
@@ -136,16 +138,16 @@ export default function PropertyDetailsScreen() {
     const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.003}%2C${property.latitude - 0.003}%2C${property.longitude + 0.003}%2C${property.latitude + 0.003}&layer=mapnik&marker=${property.latitude}%2C${property.longitude}`;
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#F5F8F6' }}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 }}>
-                {/* Hero image carousel */}
-                <View style={{ opacity: property.is_sold ? 0.6 : 1 }}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+                {/* ── Hero image carousel ── */}
+                <View style={{ opacity: property.is_sold ? 0.55 : 1 }}>
                     <FlatList
                         data={property.images}
                         keyExtractor={(_, i) => i.toString()}
                         renderItem={({ item }) => (
                             <TouchableOpacity onPress={() => setIsViewerVisible(true)} activeOpacity={0.95}>
-                                <Image source={{ uri: item }} style={{ width, height: 320 }} resizeMode="cover" />
+                                <Image source={{ uri: item }} style={{ width, height: 300 }} resizeMode="cover" />
                             </TouchableOpacity>
                         )}
                         horizontal
@@ -157,52 +159,71 @@ export default function PropertyDetailsScreen() {
 
                     {/* Dot indicators */}
                     {property.images.length > 1 && (
-                        <View style={{ position: 'absolute', bottom: 16, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 5 }}>
+                        <View style={{
+                            position: 'absolute',
+                            bottom: spacing.lg,
+                            left: 0,
+                            right: 0,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            gap: spacing.xs,
+                        }}>
                             {property.images.map((_, i) => (
                                 <View
                                     key={i}
                                     style={{
-                                        height: 5,
+                                        height: 3,
                                         width: i === activeIndex ? 20 : 5,
-                                        borderRadius: 3,
-                                        backgroundColor: i === activeIndex ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
+                                        borderRadius: 2,
+                                        backgroundColor: i === activeIndex ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
                                     }}
                                 />
                             ))}
                         </View>
                     )}
 
-                    {/* Photo count badge */}
+                    {/* Photo count */}
                     <View style={{
                         position: 'absolute',
-                        bottom: 14,
-                        right: 14,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        paddingHorizontal: 10,
-                        paddingVertical: 4,
-                        borderRadius: 100,
+                        bottom: spacing.md,
+                        right: spacing.md,
+                        backgroundColor: 'rgba(250,248,244,0.90)',
+                        paddingHorizontal: spacing.sm,
+                        paddingVertical: 3,
+                        borderRadius: radius.xs,
                     }}>
-                        <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '600' }}>
-                            {activeIndex + 1}/{property.images.length}
+                        <Text style={{
+                            fontFamily: fonts.bodyM,
+                            color: colors.textPrimary,
+                            fontSize: fontSize.micro,
+                        }}>
+                            {activeIndex + 1} / {property.images.length}
                         </Text>
                     </View>
                 </View>
 
-                {/* Floating nav buttons over image */}
+                {/* Back / Save floating controls */}
                 <SafeAreaView style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 10 }}>
+                    <View style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        paddingHorizontal: spacing.lg,
+                        paddingTop: spacing.md,
+                    }}>
                         <TouchableOpacity
                             onPress={() => router.back()}
                             style={{
                                 width: 40,
                                 height: 40,
-                                borderRadius: 20,
-                                backgroundColor: 'rgba(0,0,0,0.45)',
+                                borderRadius: radius.sm,
+                                backgroundColor: 'rgba(250,248,244,0.90)',
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                borderWidth: 1,
+                                borderColor: 'rgba(28,28,30,0.08)',
                             }}
                         >
-                            <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
+                            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={toggleSave}
@@ -210,97 +231,170 @@ export default function PropertyDetailsScreen() {
                             style={{
                                 width: 40,
                                 height: 40,
-                                borderRadius: 20,
-                                backgroundColor: 'rgba(0,0,0,0.45)',
+                                borderRadius: radius.sm,
+                                backgroundColor: 'rgba(250,248,244,0.90)',
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                borderWidth: 1,
+                                borderColor: 'rgba(28,28,30,0.08)',
                             }}
                         >
                             <Ionicons
                                 name={isSaved ? 'heart' : 'heart-outline'}
                                 size={20}
-                                color={isSaved ? '#4ADE80' : '#FFFFFF'}
+                                color={isSaved ? colors.error : colors.textPrimary}
                             />
                         </TouchableOpacity>
                     </View>
                 </SafeAreaView>
 
-                {/* Content card — rises over image */}
+                {/* ── Content area ── */}
                 <View style={{
-                    backgroundColor: '#F5F8F6',
-                    borderTopLeftRadius: 24,
-                    borderTopRightRadius: 24,
-                    marginTop: -20,
-                    paddingTop: 24,
-                    paddingHorizontal: 20,
-                    opacity: property.is_sold ? 0.7 : 1,
+                    backgroundColor: colors.background,
+                    paddingHorizontal: spacing.pageHorizontal,
+                    paddingTop: spacing.xl,
+                    opacity: property.is_sold ? 0.65 : 1,
                 }}>
-                    {/* Badges row */}
-                    <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
-                        <View style={{
-                            backgroundColor: '#1C685D',
-                            paddingHorizontal: 11,
-                            paddingVertical: 4,
-                            borderRadius: 100,
+                    {/* Type + badges row */}
+                    <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center', marginBottom: spacing.sm }}>
+                        <Text style={{
+                            fontFamily: fonts.bodySB,
+                            fontSize: fontSize.micro,
+                            color: colors.textMuted,
+                            textTransform: 'capitalize',
+                            letterSpacing: 0.4,
                         }}>
-                            <Text style={{ color: '#E8F3F1', fontSize: 11, fontWeight: '700', textTransform: 'capitalize', letterSpacing: 0.4 }}>
-                                {property.type}
-                            </Text>
-                        </View>
+                            {property.type}
+                        </Text>
                         {property.is_featured && (
-                            <View style={{ backgroundColor: '#E8F3F1', paddingHorizontal: 11, paddingVertical: 4, borderRadius: 100 }}>
-                                <Text style={{ color: '#1C685D', fontSize: 11, fontWeight: '700' }}>⭐ Featured</Text>
-                            </View>
+                            <>
+                                <View style={{ width: 3, height: 3, borderRadius: 2, backgroundColor: colors.accentGold }} />
+                                <Text style={{
+                                    fontFamily: fonts.bodyM,
+                                    fontSize: fontSize.micro,
+                                    color: colors.accentGold,
+                                }}>
+                                    ✦ Featured
+                                </Text>
+                            </>
                         )}
                         {property.is_sold && (
-                            <View style={{ backgroundColor: '#FEF2F2', paddingHorizontal: 11, paddingVertical: 4, borderRadius: 100 }}>
-                                <Text style={{ color: '#EF4444', fontSize: 11, fontWeight: '700', letterSpacing: 0.4 }}>SOLD</Text>
-                            </View>
+                            <>
+                                <View style={{ width: 3, height: 3, borderRadius: 2, backgroundColor: colors.error }} />
+                                <Text style={{
+                                    fontFamily: fonts.bodySB,
+                                    fontSize: fontSize.micro,
+                                    color: colors.error,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: 0.5,
+                                }}>
+                                    Sold
+                                </Text>
+                            </>
                         )}
                     </View>
 
-                    {/* Title + price */}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                        <Text style={{ flex: 1, fontSize: 20, fontWeight: '800', color: '#0F1712', lineHeight: 26, marginRight: 12 }}>
-                            {property.title}
-                        </Text>
-                        <Text style={{ fontSize: 20, fontWeight: '800', color: '#1C685D' }}>
-                            {formatPrice(property.price)}
-                        </Text>
-                    </View>
+                    {/* Title */}
+                    <Text style={{
+                        fontFamily: fonts.display,
+                        fontSize: fontSize.h2,
+                        color: colors.textPrimary,
+                        lineHeight: 32,
+                        marginBottom: spacing.sm,
+                    }}>
+                        {property.title}
+                    </Text>
+
+                    {/* Price */}
+                    <Text style={{
+                        fontFamily: fonts.bodySB,
+                        fontSize: fontSize.h3,
+                        color: colors.brand,
+                        marginBottom: spacing.md,
+                    }}>
+                        {formatPrice(property.price)}
+                    </Text>
 
                     {/* Location */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 20 }}>
-                        <Ionicons name="location-outline" size={14} color="#9CA3AF" />
-                        <Text style={{ color: '#9CA3AF', fontSize: 13 }}>{property.address}, {property.city}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: spacing.xxl }}>
+                        <Ionicons name="location-outline" size={14} color={colors.textMuted} />
+                        <Text style={{
+                            fontFamily: fonts.body,
+                            color: colors.textMuted,
+                            fontSize: fontSize.body,
+                        }}>
+                            {property.address}, {property.city}
+                        </Text>
                     </View>
 
-                    {/* Specs strip */}
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 24 }}>
-                        <SpecPill icon="bed-outline" value={`${property.bedrooms} beds`} />
-                        <SpecPill icon="water-outline" value={`${property.bathrooms} baths`} />
-                        <SpecPill icon="expand-outline" value={`${property.area_sqft} ft²`} />
-                        <SpecPill icon="home-outline" value={property.type} />
-                    </ScrollView>
+                    {/* Key facts horizontal strip */}
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
+                        backgroundColor: colors.surface,
+                        borderRadius: radius.md,
+                        borderWidth: 1,
+                        borderColor: colors.border,
+                        paddingVertical: spacing.lg,
+                        marginBottom: spacing.xxl,
+                    }}>
+                        <FactItem icon="bed-outline" label={`${property.bedrooms} beds`} />
+                        <FactDivider />
+                        <FactItem icon="water-outline" label={`${property.bathrooms} baths`} />
+                        {property.area_sqft && (
+                            <>
+                                <FactDivider />
+                                <FactItem icon="expand-outline" label={`${property.area_sqft} ft²`} />
+                            </>
+                        )}
+                    </View>
 
                     {/* Divider */}
-                    <View style={{ height: 1, backgroundColor: '#E5E7EB', marginBottom: 20 }} />
+                    <View style={{ height: 1, backgroundColor: colors.border, marginBottom: spacing.xxl }} />
 
                     {/* Description */}
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F1712', marginBottom: 10 }}>About this property</Text>
-                    <Text style={{ color: '#6B7280', fontSize: 14, lineHeight: 22, marginBottom: 4 }}>{displayDesc}</Text>
+                    <Text style={{
+                        fontFamily: fonts.bodySB,
+                        fontSize: fontSize.bodyLg,
+                        color: colors.textPrimary,
+                        marginBottom: spacing.md,
+                    }}>
+                        About this property
+                    </Text>
+                    <Text style={{
+                        fontFamily: fonts.body,
+                        color: colors.textSecondary,
+                        fontSize: fontSize.body,
+                        lineHeight: 24,
+                        marginBottom: spacing.sm,
+                    }}>
+                        {displayDesc}
+                    </Text>
                     {isLongDesc && (
                         <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-                            <Text style={{ color: '#1C685D', fontSize: 14, fontWeight: '700', marginBottom: 20 }}>
+                            <Text style={{
+                                fontFamily: fonts.bodySB,
+                                color: colors.brand,
+                                fontSize: fontSize.body,
+                                marginBottom: spacing.xxl,
+                            }}>
                                 {isExpanded ? 'Show less' : 'Read more'}
                             </Text>
                         </TouchableOpacity>
                     )}
 
-                    <View style={{ marginBottom: 24 }} />
+                    <View style={{ marginBottom: spacing.xxl }} />
 
                     {/* Location map */}
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F1712', marginBottom: 12 }}>Location</Text>
+                    <Text style={{
+                        fontFamily: fonts.bodySB,
+                        fontSize: fontSize.bodyLg,
+                        color: colors.textPrimary,
+                        marginBottom: spacing.md,
+                    }}>
+                        Location
+                    </Text>
                     <TouchableOpacity
                         onPress={() => router.push({
                             pathname: '/(root)/property/map',
@@ -315,31 +409,40 @@ export default function PropertyDetailsScreen() {
                         style={{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            backgroundColor: '#FFFFFF',
-                            borderRadius: 16,
+                            backgroundColor: colors.surface,
+                            borderRadius: radius.md,
                             overflow: 'hidden',
-                            marginBottom: 24,
+                            marginBottom: spacing.xxl,
                             borderWidth: 1,
-                            borderColor: '#E5E7EB',
+                            borderColor: colors.border,
                         }}
                     >
-                        <View style={{ width: 100, height: 88 }}>
+                        <View style={{ width: 100, height: 84 }}>
                             <WebView source={{ uri: mapUrl }} style={{ flex: 1 }} scrollEnabled={false} pointerEvents="none" />
                         </View>
-                        <View style={{ flex: 1, paddingHorizontal: 14 }}>
-                            <Text style={{ fontSize: 14, fontWeight: '700', color: '#0F1712' }} numberOfLines={1}>
+                        <View style={{ flex: 1, paddingHorizontal: spacing.lg }}>
+                            <Text style={{
+                                fontFamily: fonts.bodySB,
+                                fontSize: fontSize.body,
+                                color: colors.textPrimary,
+                            }} numberOfLines={1}>
                                 {property.address}
                             </Text>
-                            <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 2 }} numberOfLines={1}>
+                            <Text style={{
+                                fontFamily: fonts.body,
+                                fontSize: fontSize.caption,
+                                color: colors.textMuted,
+                                marginTop: 3,
+                            }} numberOfLines={1}>
                                 {property.city}
                             </Text>
                         </View>
-                        <Ionicons name="chevron-forward" size={18} color="#D1D5DB" style={{ marginRight: 14 }} />
+                        <Ionicons name="chevron-forward" size={16} color={colors.textMuted} style={{ marginRight: spacing.lg }} />
                     </TouchableOpacity>
 
                     {/* Admin actions */}
                     {isAdmin && (
-                        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 8 }}>
+                        <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.sm }}>
                             {!property.is_sold && (
                                 <TouchableOpacity
                                     onPress={handleMarkSold}
@@ -348,14 +451,18 @@ export default function PropertyDetailsScreen() {
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        gap: 8,
-                                        backgroundColor: '#E8F3F1',
-                                        paddingVertical: 13,
-                                        borderRadius: 12,
+                                        gap: spacing.sm,
+                                        backgroundColor: colors.brandSubtle,
+                                        borderWidth: 1,
+                                        borderColor: 'rgba(107,122,87,0.15)',
+                                        paddingVertical: spacing.md,
+                                        borderRadius: radius.sm,
                                     }}
                                 >
-                                    <Ionicons name="checkmark-circle-outline" size={18} color="#1C685D" />
-                                    <Text style={{ color: '#1C685D', fontWeight: '700' }}>Mark Sold</Text>
+                                    <Ionicons name="checkmark-circle-outline" size={17} color={colors.brand} />
+                                    <Text style={{ fontFamily: fonts.bodySB, color: colors.brand, fontSize: fontSize.body }}>
+                                        Mark Sold
+                                    </Text>
                                 </TouchableOpacity>
                             )}
                             <TouchableOpacity
@@ -365,21 +472,25 @@ export default function PropertyDetailsScreen() {
                                     flexDirection: 'row',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: 8,
-                                    backgroundColor: '#FEF2F2',
-                                    paddingVertical: 13,
-                                    borderRadius: 12,
+                                    gap: spacing.sm,
+                                    backgroundColor: colors.errorBg,
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(180,68,53,0.15)',
+                                    paddingVertical: spacing.md,
+                                    borderRadius: radius.sm,
                                 }}
                             >
-                                <Ionicons name="trash-outline" size={18} color="#EF4444" />
-                                <Text style={{ color: '#EF4444', fontWeight: '700' }}>Delete</Text>
+                                <Ionicons name="trash-outline" size={17} color={colors.error} />
+                                <Text style={{ fontFamily: fonts.bodySB, color: colors.error, fontSize: fontSize.body }}>
+                                    Delete
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     )}
                 </View>
             </ScrollView>
 
-            {/* Sticky WhatsApp contact bar */}
+            {/* ── Sticky Contact bar ── */}
             <SafeAreaView
                 edges={['bottom']}
                 style={{
@@ -387,11 +498,11 @@ export default function PropertyDetailsScreen() {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: colors.surface,
                     borderTopWidth: 1,
-                    borderTopColor: '#F3F4F6',
-                    paddingHorizontal: 20,
-                    paddingTop: 12,
+                    borderTopColor: colors.border,
+                    paddingHorizontal: spacing.pageHorizontal,
+                    paddingTop: spacing.md,
                 }}
             >
                 <TouchableOpacity
@@ -400,19 +511,25 @@ export default function PropertyDetailsScreen() {
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: 10,
-                        backgroundColor: '#08383C',
-                        paddingVertical: 15,
-                        borderRadius: 14,
-                        marginBottom: 4,
+                        gap: spacing.sm,
+                        backgroundColor: colors.brand,
+                        paddingVertical: spacing.lg,
+                        borderRadius: radius.md,
+                        marginBottom: spacing.xs,
                     }}
                 >
-                    <Ionicons name="logo-whatsapp" size={20} color="#4ADE80" />
-                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>Contact Agent</Text>
+                    <Ionicons name="logo-whatsapp" size={19} color={colors.surface} />
+                    <Text style={{
+                        fontFamily: fonts.bodySB,
+                        color: colors.surface,
+                        fontSize: fontSize.bodyLg,
+                    }}>
+                        Contact Agent
+                    </Text>
                 </TouchableOpacity>
             </SafeAreaView>
 
-            <ImageViewing
+            <ImageViewerModal
                 images={property.images.map((uri) => ({ uri }))}
                 imageIndex={activeIndex}
                 visible={isViewerVisible}

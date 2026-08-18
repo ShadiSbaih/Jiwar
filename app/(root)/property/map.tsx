@@ -4,6 +4,7 @@ import React from 'react';
 import { Linking, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import WebView from 'react-native-webview';
+import { colors, fonts, fontSize, radius, spacing } from '@/constants/theme';
 
 export default function MapScreen() {
     const { latitude, longitude, title, address } = useLocalSearchParams<{
@@ -20,16 +21,18 @@ export default function MapScreen() {
     const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.001}%2C${lat - 0.001}%2C${lng + 0.001}%2C${lat + 0.001}&layer=mapnik&marker=${lat}%2C${lng}`;
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#F5F8F6' }}>
-            {/* Header */}
-            <SafeAreaView edges={["top"]} style={{ backgroundColor: '#08383C', zIndex: 50 }}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+            {/* Header — ivory background, no dark bar */}
+            <SafeAreaView edges={["top"]} style={{ backgroundColor: colors.background, zIndex: 50 }}>
                 <View style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    paddingHorizontal: 16,
-                    paddingTop: 10,
-                    paddingBottom: 16,
-                    gap: 12,
+                    paddingHorizontal: spacing.pageHorizontal,
+                    paddingTop: spacing.sm,
+                    paddingBottom: spacing.md,
+                    gap: spacing.md,
+                    borderBottomWidth: 1,
+                    borderBottomColor: colors.border,
                 }}>
                     {/* Back button */}
                     <TouchableOpacity
@@ -37,21 +40,32 @@ export default function MapScreen() {
                         style={{
                             width: 38,
                             height: 38,
-                            borderRadius: 19,
-                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            borderRadius: radius.sm,
+                            backgroundColor: colors.surface,
+                            borderWidth: 1,
+                            borderColor: colors.border,
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}
                     >
-                        <Ionicons name="arrow-back" size={18} color="#FFFFFF" />
+                        <Ionicons name="arrow-back" size={18} color={colors.textPrimary} />
                     </TouchableOpacity>
 
                     {/* Title block */}
                     <View style={{ flex: 1 }}>
-                        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14 }} numberOfLines={1}>
+                        <Text style={{
+                            fontFamily: fonts.bodySB,
+                            fontSize: fontSize.body,
+                            color: colors.textPrimary,
+                        }} numberOfLines={1}>
                             {title}
                         </Text>
-                        <Text style={{ color: '#9CA3AF', fontSize: 12, marginTop: 2 }} numberOfLines={1}>
+                        <Text style={{
+                            fontFamily: fonts.body,
+                            fontSize: fontSize.caption,
+                            color: colors.textMuted,
+                            marginTop: 2,
+                        }} numberOfLines={1}>
                             {address}
                         </Text>
                     </View>
@@ -62,21 +76,27 @@ export default function MapScreen() {
                         style={{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            gap: 6,
-                            backgroundColor: '#1C685D',
-                            paddingHorizontal: 14,
-                            paddingVertical: 9,
-                            borderRadius: 10,
+                            gap: spacing.xs,
+                            backgroundColor: colors.brand,
+                            paddingHorizontal: spacing.md,
+                            paddingVertical: spacing.sm,
+                            borderRadius: radius.xs,
                         }}
                     >
-                        <Ionicons name="navigate-outline" size={14} color="#4ADE80" />
-                        <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '700' }}>Directions</Text>
+                        <Ionicons name="navigate-outline" size={14} color={colors.surface} />
+                        <Text style={{
+                            fontFamily: fonts.bodySB,
+                            color: colors.surface,
+                            fontSize: fontSize.caption,
+                        }}>
+                            Directions
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
 
             {/* Full-screen map */}
-            <View style={{ flex: 1, marginTop: -2 }}>
+            <View style={{ flex: 1 }}>
                 <WebView source={{ uri: mapUrl }} style={{ flex: 1 }} />
             </View>
         </View>

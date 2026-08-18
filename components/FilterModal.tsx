@@ -1,23 +1,9 @@
 import { BEDROOM_OPTIONS, PRICE_PRESETS, PROPERTY_TYPE_OPTIONS } from '@/constants/filters';
+import { colors, fonts, fontSize, radius, spacing } from '@/constants/theme';
 import { useFilterStore } from '@/store/filterStore';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-// ─── Design tokens (inline — consistent with the rest of the app) ──────────
-const C = {
-    pine:       '#08383C',
-    pineDark:   '#061F22',
-    teal:       '#1C685D',
-    tealMuted:  '#E8F3F1',
-    green:      '#4ADE80',
-    white:      '#FFFFFF',
-    sage:       '#F5F8F6',
-    border:     '#E5E7EB',
-    textMain:   '#0F1712',
-    textSub:    '#6B7280',
-    textMuted:  '#9CA3AF',
-};
 
 export default function FilterModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
     const { type, bedrooms, minPrice, maxPrice,
@@ -43,14 +29,13 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
 
     return (
         <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-            <KeyboardAvoidingView 
-                style={{ flex: 1, backgroundColor: C.white }}
+            <KeyboardAvoidingView
+                style={{ flex: 1, backgroundColor: colors.surface }}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-
                 {/* Drag handle */}
-                <View style={{ alignItems: 'center', paddingTop: 12, paddingBottom: 6 }}>
-                    <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: C.border }} />
+                <View style={{ alignItems: 'center', paddingTop: spacing.md, paddingBottom: spacing.sm }}>
+                    <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: colors.borderStrong }} />
                 </View>
 
                 {/* Header */}
@@ -58,45 +43,64 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    paddingHorizontal: 20,
-                    paddingTop: 8,
-                    paddingBottom: 20,
+                    paddingHorizontal: spacing.pageHorizontal,
+                    paddingTop: spacing.sm,
+                    paddingBottom: spacing.xl,
                     borderBottomWidth: 1,
-                    borderBottomColor: C.border,
+                    borderBottomColor: colors.border,
                 }}>
                     <View>
-                        <Text style={{ fontSize: 20, fontWeight: '800', color: C.textMain }}>Filters</Text>
+                        <Text style={{
+                            fontFamily: fonts.display,
+                            fontSize: fontSize.h3,
+                            color: colors.textPrimary,
+                        }}>
+                            Filters
+                        </Text>
                         {activeCount > 0 && (
-                            <Text style={{ fontSize: 12, color: C.teal, fontWeight: '600', marginTop: 2 }}>
-                                {activeCount} active filter{activeCount > 1 ? 's' : ''}
+                            <Text style={{
+                                fontFamily: fonts.bodyM,
+                                fontSize: fontSize.caption,
+                                color: colors.brand,
+                                marginTop: 2,
+                            }}>
+                                {activeCount} active {activeCount > 1 ? 'filters' : 'filter'}
                             </Text>
                         )}
                     </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
                         <TouchableOpacity
                             onPress={handleReset}
                             style={{
-                                paddingHorizontal: 14,
-                                paddingVertical: 7,
-                                borderRadius: 20,
+                                paddingHorizontal: spacing.lg,
+                                paddingVertical: spacing.sm,
+                                borderRadius: radius.xs,
                                 borderWidth: 1,
-                                borderColor: C.border,
+                                borderColor: colors.border,
                             }}
                         >
-                            <Text style={{ fontSize: 13, fontWeight: '600', color: C.textSub }}>Reset all</Text>
+                            <Text style={{
+                                fontFamily: fonts.bodyM,
+                                fontSize: fontSize.caption,
+                                color: colors.textSecondary,
+                            }}>
+                                Reset all
+                            </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={onClose}
                             style={{
                                 width: 34,
                                 height: 34,
-                                borderRadius: 17,
-                                backgroundColor: C.sage,
+                                borderRadius: radius.sm,
+                                backgroundColor: colors.background,
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                borderWidth: 1,
+                                borderColor: colors.border,
                             }}
                         >
-                            <Ionicons name="close" size={18} color={C.textMain} />
+                            <Ionicons name="close" size={17} color={colors.textPrimary} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -104,14 +108,19 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
                 {/* Body */}
                 <ScrollView
                     style={{ flex: 1 }}
-                    contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 28, paddingBottom: 40, gap: 32 }}
+                    contentContainerStyle={{
+                        paddingHorizontal: spacing.pageHorizontal,
+                        paddingTop: spacing.xxl,
+                        paddingBottom: spacing.mega,
+                        gap: spacing.xxxl,
+                    }}
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
                 >
-                    {/* ── Property Type ─────────────────────────────── */}
+                    {/* ── Property Type ──────────────────────── */}
                     <View>
-                        <SectionLabel>Property Type</SectionLabel>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+                        <FilterSectionLabel>Property Type</FilterSectionLabel>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.md }}>
                             {PROPERTY_TYPE_OPTIONS.map((item) => {
                                 const active = type === item.value;
                                 return (
@@ -121,30 +130,26 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
                                         style={{
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            width: 76,
-                                            height: 76,
-                                            borderRadius: 18,
-                                            backgroundColor: active ? C.pine : C.white,
-                                            borderWidth: active ? 0 : 1,
-                                            borderColor: C.border,
-                                            shadowColor: active ? C.pine : '#000',
-                                            shadowOffset: { width: 0, height: active ? 4 : 1 },
-                                            shadowOpacity: active ? 0.25 : 0.04,
-                                            shadowRadius: active ? 8 : 4,
-                                            elevation: active ? 4 : 1,
+                                            width: 74,
+                                            paddingVertical: spacing.md,
+                                            borderRadius: radius.sm,
+                                            backgroundColor: active ? colors.brand : colors.surface,
+                                            borderWidth: 1,
+                                            borderColor: active ? colors.brand : colors.border,
                                         }}
                                     >
-                                        <Ionicons
-                                            name={item.icon}
-                                            size={22}
-                                            color={active ? C.green : C.textSub}
-                                        />
+                                        {item.icon && (
+                                            <Ionicons
+                                                name={item.icon}
+                                                size={20}
+                                                color={active ? colors.surface : colors.textMuted}
+                                            />
+                                        )}
                                         <Text style={{
-                                            fontSize: 11,
-                                            fontWeight: '700',
-                                            marginTop: 6,
-                                            color: active ? C.white : C.textSub,
-                                            letterSpacing: 0.2,
+                                            fontFamily: fonts.bodyM,
+                                            fontSize: fontSize.micro,
+                                            marginTop: spacing.xs,
+                                            color: active ? colors.surface : colors.textSecondary,
                                         }}>
                                             {item.label}
                                         </Text>
@@ -154,10 +159,10 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
                         </View>
                     </View>
 
-                    {/* ── Bedrooms ──────────────────────────────────── */}
+                    {/* ── Bedrooms ───────────────────────────── */}
                     <View>
-                        <SectionLabel>Bedrooms</SectionLabel>
-                        <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+                        <FilterSectionLabel>Bedrooms</FilterSectionLabel>
+                        <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md }}>
                             {BEDROOM_OPTIONS.map((item) => {
                                 const active = bedrooms === item.value;
                                 return (
@@ -166,24 +171,19 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
                                         onPress={() => setBedrooms(active ? null : item.value)}
                                         style={{
                                             width: 52,
-                                            height: 52,
-                                            borderRadius: 26,
+                                            height: 48,
+                                            borderRadius: radius.sm,
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            backgroundColor: active ? C.pine : C.white,
-                                            borderWidth: active ? 0 : 1,
-                                            borderColor: C.border,
-                                            shadowColor: active ? C.pine : '#000',
-                                            shadowOffset: { width: 0, height: active ? 4 : 1 },
-                                            shadowOpacity: active ? 0.25 : 0.04,
-                                            shadowRadius: active ? 8 : 4,
-                                            elevation: active ? 4 : 1,
+                                            backgroundColor: active ? colors.brand : colors.surface,
+                                            borderWidth: 1,
+                                            borderColor: active ? colors.brand : colors.border,
                                         }}
                                     >
                                         <Text style={{
-                                            fontSize: 14,
-                                            fontWeight: '800',
-                                            color: active ? C.green : C.textSub,
+                                            fontFamily: fonts.bodySB,
+                                            fontSize: fontSize.body,
+                                            color: active ? colors.surface : colors.textSecondary,
                                         }}>
                                             {item.label}
                                         </Text>
@@ -193,35 +193,47 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
                         </View>
                     </View>
 
-                    {/* ── Price Range ───────────────────────────────── */}
+                    {/* ── Price Range ─────────────────────────── */}
                     <View>
-                        <SectionLabel>Price Range (PKR)</SectionLabel>
+                        <FilterSectionLabel>Price Range (PKR)</FilterSectionLabel>
 
                         {/* Min / Max inputs */}
-                        <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
+                        <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.md }}>
                             {[
-                                { label: 'Min', value: localMin, onChange: setLocalMin, placeholder: 'No min' },
-                                { label: 'Max', value: localMax, onChange: setLocalMax, placeholder: 'No max' },
+                                { label: 'MIN', value: localMin, onChange: setLocalMin, placeholder: 'No min' },
+                                { label: 'MAX', value: localMax, onChange: setLocalMax, placeholder: 'No max' },
                             ].map(({ label, value, onChange, placeholder }) => (
                                 <View
                                     key={label}
                                     style={{
                                         flex: 1,
-                                        backgroundColor: C.sage,
-                                        borderRadius: 12,
+                                        backgroundColor: colors.background,
+                                        borderRadius: radius.sm,
                                         borderWidth: 1,
-                                        borderColor: C.border,
-                                        paddingHorizontal: 12,
-                                        paddingVertical: 2,
+                                        borderColor: colors.border,
+                                        paddingHorizontal: spacing.md,
+                                        paddingVertical: spacing.xs,
                                     }}
                                 >
-                                    <Text style={{ fontSize: 10, fontWeight: '700', color: C.textMuted, letterSpacing: 0.8, textTransform: 'uppercase', marginTop: 8 }}>
+                                    <Text style={{
+                                        fontFamily: fonts.bodySB,
+                                        fontSize: fontSize.nano,
+                                        color: colors.textMuted,
+                                        letterSpacing: 0.8,
+                                        textTransform: 'uppercase',
+                                        marginTop: spacing.sm,
+                                    }}>
                                         {label}
                                     </Text>
                                     <TextInput
-                                        style={{ fontSize: 15, fontWeight: '700', color: C.textMain, paddingVertical: 6 }}
+                                        style={{
+                                            fontFamily: fonts.bodySB,
+                                            fontSize: fontSize.body,
+                                            color: colors.textPrimary,
+                                            paddingVertical: spacing.sm,
+                                        }}
                                         placeholder={placeholder}
-                                        placeholderTextColor={C.textMuted}
+                                        placeholderTextColor={colors.textMuted}
                                         keyboardType="numeric"
                                         value={value}
                                         onChangeText={onChange}
@@ -231,7 +243,7 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
                         </View>
 
                         {/* Price presets */}
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 14 }}>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.lg }}>
                             {PRICE_PRESETS.map((p) => {
                                 const active = minPrice === p.min && maxPrice === p.max;
                                 return (
@@ -244,18 +256,18 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
                                             setMaxPrice(p.max);
                                         }}
                                         style={{
-                                            paddingHorizontal: 14,
-                                            paddingVertical: 8,
-                                            borderRadius: 100,
-                                            backgroundColor: active ? C.pine : C.white,
-                                            borderWidth: active ? 0 : 1,
-                                            borderColor: C.border,
+                                            paddingHorizontal: spacing.lg,
+                                            paddingVertical: spacing.sm,
+                                            borderRadius: radius.xs,
+                                            backgroundColor: active ? colors.brand : colors.surface,
+                                            borderWidth: 1,
+                                            borderColor: active ? colors.brand : colors.border,
                                         }}
                                     >
                                         <Text style={{
-                                            fontSize: 13,
-                                            fontWeight: '600',
-                                            color: active ? C.green : C.textSub,
+                                            fontFamily: active ? fonts.bodySB : fonts.bodyM,
+                                            fontSize: fontSize.caption,
+                                            color: active ? colors.surface : colors.textSecondary,
                                         }}>
                                             {p.label}
                                         </Text>
@@ -268,32 +280,28 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
 
                 {/* Apply button — sticky at bottom */}
                 <View style={{
-                    paddingHorizontal: 20,
-                    paddingTop: 14,
-                    paddingBottom: 32,
+                    paddingHorizontal: spacing.pageHorizontal,
+                    paddingTop: spacing.lg,
+                    paddingBottom: spacing.xxxl,
                     borderTopWidth: 1,
-                    borderTopColor: C.border,
-                    backgroundColor: C.white,
+                    borderTopColor: colors.border,
+                    backgroundColor: colors.surface,
                 }}>
                     <TouchableOpacity
                         onPress={handleApply}
                         style={{
-                            backgroundColor: C.pine,
-                            borderRadius: 14,
-                            paddingVertical: 16,
+                            backgroundColor: colors.brand,
+                            borderRadius: radius.md,
+                            height: 50,
                             alignItems: 'center',
                             justifyContent: 'center',
-                            flexDirection: 'row',
-                            gap: 8,
-                            shadowColor: C.pine,
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.35,
-                            shadowRadius: 10,
-                            elevation: 6,
                         }}
                     >
-                        <Ionicons name="checkmark-circle" size={19} color={C.green} />
-                        <Text style={{ color: C.white, fontWeight: '800', fontSize: 16 }}>
+                        <Text style={{
+                            fontFamily: fonts.bodySB,
+                            color: colors.surface,
+                            fontSize: fontSize.bodyLg,
+                        }}>
                             Show Results{activeCount > 0 ? `  ·  ${activeCount} filter${activeCount > 1 ? 's' : ''}` : ''}
                         </Text>
                     </TouchableOpacity>
@@ -303,13 +311,12 @@ export default function FilterModal({ visible, onClose }: { visible: boolean; on
     );
 }
 
-// Small helper — keeps section labels consistent
-function SectionLabel({ children }: { children: string }) {
+function FilterSectionLabel({ children }: { children: string }) {
     return (
         <Text style={{
-            fontSize: 11,
-            fontWeight: '800',
-            color: '#9CA3AF',
+            fontFamily: fonts.bodySB,
+            fontSize: fontSize.nano,
+            color: colors.textMuted,
             letterSpacing: 1.2,
             textTransform: 'uppercase',
         }}>

@@ -1,4 +1,5 @@
 import { LISTING_PROPERTY_OPTIONS } from '@/constants/filters';
+import { colors, fonts, fontSize, radius, spacing } from '@/constants/theme';
 import { useSupabase } from '@/hooks/useSupabase';
 import { addProperty, uploadPropertyImage } from '@/services/properties';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,21 +12,6 @@ import {
     Platform, ScrollView, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-// ─── Design tokens ────────────────────────────────────────────────────────────
-const C = {
-    pine:       '#08383C',
-    pineDark:   '#061F22',
-    teal:       '#1C685D',
-    tealMuted:  '#E8F3F1',
-    green:      '#4ADE80',
-    sage:       '#F5F8F6',
-    white:      '#FFFFFF',
-    border:     '#E5E7EB',
-    textMain:   '#0F1712',
-    textSub:    '#6B7280',
-    textMuted:  '#9CA3AF',
-};
 
 type PropertyType = (typeof LISTING_PROPERTY_OPTIONS)[number]["value"];
 
@@ -56,14 +42,19 @@ const MIN_PRICE = 1;
 const MAX_PRICE = 999_999_999;
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-function SectionLabel({ children }: { children: string }) {
+
+function FormSectionLabel({ children }: { children: string }) {
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-            <View style={{ width: 3, height: 14, borderRadius: 2, backgroundColor: C.teal }} />
-            <Text style={{ fontSize: 11, fontWeight: '800', color: C.textMuted, letterSpacing: 1.2, textTransform: 'uppercase' }}>
-                {children}
-            </Text>
-        </View>
+        <Text style={{
+            fontFamily: fonts.bodySB,
+            fontSize: fontSize.nano,
+            color: colors.textMuted,
+            letterSpacing: 1.2,
+            textTransform: 'uppercase',
+            marginBottom: spacing.md,
+        }}>
+            {children}
+        </Text>
     );
 }
 
@@ -71,15 +62,18 @@ function FormInput({
     placeholder, value, onChangeText, keyboardType = 'default',
     multiline = false, height, autoCapitalize = 'sentences',
 }: {
-    placeholder: string; value: string;
+    placeholder: string;
+    value: string;
     onChangeText: (v: string) => void;
-    keyboardType?: any; multiline?: boolean; height?: number;
+    keyboardType?: any;
+    multiline?: boolean;
+    height?: number;
     autoCapitalize?: any;
 }) {
     return (
         <TextInput
             placeholder={placeholder}
-            placeholderTextColor={C.textMuted}
+            placeholderTextColor={colors.textMuted}
             value={value}
             onChangeText={onChangeText}
             keyboardType={keyboardType}
@@ -87,14 +81,15 @@ function FormInput({
             textAlignVertical={multiline ? 'top' : 'center'}
             autoCapitalize={autoCapitalize}
             style={{
-                backgroundColor: C.white,
+                backgroundColor: colors.surface,
                 borderWidth: 1,
-                borderColor: C.border,
-                borderRadius: 12,
-                paddingHorizontal: 14,
-                paddingVertical: 13,
-                color: C.textMain,
-                fontSize: 14,
+                borderColor: colors.borderStrong,
+                borderRadius: radius.sm,
+                paddingHorizontal: spacing.lg,
+                paddingVertical: spacing.md,
+                fontFamily: fonts.body,
+                color: colors.textPrimary,
+                fontSize: fontSize.body,
                 height: height,
             }}
         />
@@ -104,34 +99,81 @@ function FormInput({
 function Stepper({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
     return (
         <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 11, fontWeight: '800', color: C.textMuted, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10 }}>
+            <Text style={{
+                fontFamily: fonts.bodySB,
+                fontSize: fontSize.nano,
+                color: colors.textMuted,
+                letterSpacing: 1.2,
+                textTransform: 'uppercase',
+                marginBottom: spacing.md,
+            }}>
                 {label}
             </Text>
             <View style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                backgroundColor: C.white,
+                backgroundColor: colors.surface,
                 borderWidth: 1,
-                borderColor: C.border,
-                borderRadius: 12,
-                paddingHorizontal: 12,
-                paddingVertical: 10,
+                borderColor: colors.borderStrong,
+                borderRadius: radius.sm,
+                paddingHorizontal: spacing.md,
+                paddingVertical: spacing.sm,
             }}>
                 <TouchableOpacity
                     onPress={() => onChange(Math.max(1, value - 1))}
-                    style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: C.sage, alignItems: 'center', justifyContent: 'center' }}
+                    style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: radius.xs,
+                        backgroundColor: colors.background,
+                        borderWidth: 1,
+                        borderColor: colors.border,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
                 >
-                    <Ionicons name="remove" size={16} color={C.textMain} />
+                    <Ionicons name="remove" size={16} color={colors.textPrimary} />
                 </TouchableOpacity>
-                <Text style={{ fontSize: 17, fontWeight: '800', color: C.textMain }}>{value}</Text>
+                <Text style={{
+                    fontFamily: fonts.bodySB,
+                    fontSize: fontSize.bodyLg,
+                    color: colors.textPrimary,
+                }}>
+                    {value}
+                </Text>
                 <TouchableOpacity
                     onPress={() => onChange(value + 1)}
-                    style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: C.tealMuted, alignItems: 'center', justifyContent: 'center' }}
+                    style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: radius.xs,
+                        backgroundColor: colors.brandSubtle,
+                        borderWidth: 1,
+                        borderColor: 'rgba(107,122,87,0.15)',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
                 >
-                    <Ionicons name="add" size={16} color={C.teal} />
+                    <Ionicons name="add" size={16} color={colors.brand} />
                 </TouchableOpacity>
             </View>
+        </View>
+    );
+}
+
+// ─── Form Section Container ────────────────────────────────────────────────────
+function FormSection({ children }: { children: React.ReactNode }) {
+    return (
+        <View style={{
+            backgroundColor: colors.surface,
+            borderRadius: radius.md,
+            borderWidth: 1,
+            borderColor: colors.border,
+            padding: spacing.xl,
+            gap: spacing.xl,
+        }}>
+            {children}
         </View>
     );
 }
@@ -244,65 +286,102 @@ export default function AddListingScreen() {
         }
 
         setForm(INITIAL_FORM);
-        Alert.alert("Success! 🎉", "Property listed successfully.", [
-            { text: "OK", onPress: () => router.replace("/(root)/(tabs)") },
+        Alert.alert("Success!", "Property listed successfully.", [
+            { text: "View Listings", onPress: () => router.replace("/(root)/(tabs)") },
         ]);
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: C.sage }}>
-            {/* Header */}
-            <SafeAreaView edges={["top"]} style={{ backgroundColor: C.pine }}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+            {/* ── Header — ivory, no dark block ── */}
+            <SafeAreaView edges={["top"]} style={{ backgroundColor: colors.background }}>
                 <View style={{
-                    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-                    paddingHorizontal: 20, paddingTop: 10, paddingBottom: 18,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: spacing.pageHorizontal,
+                    paddingTop: spacing.sm,
+                    paddingBottom: spacing.xl,
+                    borderBottomWidth: 1,
+                    borderBottomColor: colors.border,
                 }}>
                     <View>
-                        <Text style={{ color: C.white, fontSize: 22, fontWeight: '800' }}>New Listing</Text>
-                        <Text style={{ color: C.textMuted, fontSize: 13, marginTop: 2 }}>Fill in the property details</Text>
+                        <Text style={{
+                            fontFamily: fonts.display,
+                            fontSize: fontSize.h2,
+                            color: colors.textPrimary,
+                        }}>
+                            New Listing
+                        </Text>
+                        <Text style={{
+                            fontFamily: fonts.body,
+                            fontSize: fontSize.caption,
+                            color: colors.textMuted,
+                            marginTop: 2,
+                        }}>
+                            Fill in the property details
+                        </Text>
                     </View>
-                    {/* Photo count badge */}
+                    {/* Photo progress */}
                     <View style={{
-                        backgroundColor: form.images.length > 0 ? C.tealMuted : 'rgba(255,255,255,0.1)',
-                        paddingHorizontal: 12,
-                        paddingVertical: 6,
-                        borderRadius: 20,
+                        backgroundColor: form.images.length > 0 ? colors.brandSubtle : colors.background,
+                        borderWidth: 1,
+                        borderColor: form.images.length > 0 ? 'rgba(107,122,87,0.15)' : colors.border,
+                        paddingHorizontal: spacing.md,
+                        paddingVertical: spacing.sm,
+                        borderRadius: radius.xs,
                     }}>
-                        <Text style={{ color: form.images.length > 0 ? C.teal : C.textMuted, fontSize: 12, fontWeight: '700' }}>
+                        <Text style={{
+                            fontFamily: fonts.bodyM,
+                            fontSize: fontSize.caption,
+                            color: form.images.length > 0 ? colors.brand : colors.textMuted,
+                        }}>
                             {form.images.length}/6 photos
                         </Text>
                     </View>
                 </View>
             </SafeAreaView>
 
-            <KeyboardAvoidingView 
-                behavior={Platform.OS === "ios" ? "padding" : "height"} 
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
                 style={{ flex: 1 }}
             >
                 <ScrollView
-                    contentContainerStyle={{ padding: 20, paddingBottom: 80, gap: 22 }}
+                    contentContainerStyle={{
+                        padding: spacing.pageHorizontal,
+                        paddingBottom: 80,
+                        gap: spacing.xxl,
+                    }}
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
                 >
-                    {/* ── Photos ────────────────────────────────── */}
+                    {/* ── Photos ─────────────────────────────── */}
                     <View>
-                        <SectionLabel>Photos (up to 6)</SectionLabel>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                        <FormSectionLabel>Photos (up to 6)</FormSectionLabel>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
                             {form.localImages.map((uri, index) => (
                                 <View key={index} style={{ position: 'relative' }}>
                                     <Image
                                         source={{ uri }}
-                                        style={{ width: 80, height: 80, borderRadius: 12 }}
+                                        style={{ width: 80, height: 80, borderRadius: radius.sm }}
                                         resizeMode="cover"
                                     />
                                     {index === 0 && (
                                         <View style={{
-                                            position: 'absolute', top: 6, left: 6,
-                                            backgroundColor: C.pine,
-                                            paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6,
+                                            position: 'absolute', top: 5, left: 5,
+                                            backgroundColor: 'rgba(250,248,244,0.90)',
+                                            paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4,
                                         }}>
-                                            <Text style={{ color: C.green, fontSize: 8, fontWeight: '800', letterSpacing: 0.5 }}>COVER</Text>
+                                            <Text style={{
+                                                fontFamily: fonts.bodySB,
+                                                color: colors.textSecondary,
+                                                fontSize: 8,
+                                                letterSpacing: 0.4,
+                                                textTransform: 'uppercase',
+                                            }}>
+                                                Cover
+                                            </Text>
                                         </View>
                                     )}
                                     <TouchableOpacity
@@ -310,7 +389,7 @@ export default function AddListingScreen() {
                                         style={{
                                             position: 'absolute', top: -6, right: -6,
                                             width: 20, height: 20, borderRadius: 10,
-                                            backgroundColor: '#EF4444',
+                                            backgroundColor: colors.error,
                                             alignItems: 'center', justifyContent: 'center',
                                         }}
                                     >
@@ -324,19 +403,27 @@ export default function AddListingScreen() {
                                     onPress={handlePickImages}
                                     disabled={isUploadingImages}
                                     style={{
-                                        width: 80, height: 80, borderRadius: 12,
-                                        backgroundColor: C.white,
-                                        borderWidth: 2, borderStyle: 'dashed', borderColor: C.teal,
+                                        width: 80, height: 80, borderRadius: radius.sm,
+                                        backgroundColor: colors.surface,
+                                        borderWidth: 1.5, borderStyle: 'dashed',
+                                        borderColor: colors.brand,
                                         alignItems: 'center', justifyContent: 'center',
-                                        gap: 4,
+                                        gap: spacing.xs,
                                     }}
                                 >
                                     {isUploadingImages ? (
-                                        <ActivityIndicator size="small" color={C.teal} />
+                                        <ActivityIndicator size="small" color={colors.brand} />
                                     ) : (
                                         <>
-                                            <Ionicons name="camera-outline" size={22} color={C.teal} />
-                                            <Text style={{ color: C.teal, fontSize: 9, fontWeight: '700' }}>ADD</Text>
+                                            <Ionicons name="camera-outline" size={22} color={colors.brand} />
+                                            <Text style={{
+                                                fontFamily: fonts.bodySB,
+                                                color: colors.brand,
+                                                fontSize: fontSize.nano,
+                                                letterSpacing: 0.3,
+                                            }}>
+                                                ADD
+                                            </Text>
                                         </>
                                     )}
                                 </TouchableOpacity>
@@ -344,44 +431,36 @@ export default function AddListingScreen() {
                         </View>
                     </View>
 
-                    {/* ── Title ─────────────────────────────────── */}
+                    {/* ── Property Information ──────────────── */}
                     <View>
-                        <SectionLabel>Title</SectionLabel>
-                        <FormInput
-                            placeholder="e.g. Modern 3-Bed Apartment"
-                            value={form.title}
-                            onChangeText={(v) => updateForm({ title: v })}
-                        />
+                        <FormSectionLabel>Property Information</FormSectionLabel>
+                        <View style={{ gap: spacing.lg }}>
+                            <FormInput
+                                placeholder="Property title (e.g. Modern 3-Bed Apartment)"
+                                value={form.title}
+                                onChangeText={(v) => updateForm({ title: v })}
+                            />
+                            <FormInput
+                                placeholder="Description"
+                                value={form.description}
+                                onChangeText={(v) => updateForm({ description: v })}
+                                multiline
+                                height={96}
+                            />
+                            <FormInput
+                                placeholder="Price (PKR)"
+                                value={form.price}
+                                onChangeText={(v) => updateForm({ price: v })}
+                                keyboardType="numeric"
+                                autoCapitalize="none"
+                            />
+                        </View>
                     </View>
 
-                    {/* ── Description ───────────────────────────── */}
+                    {/* ── Property Type ─────────────────────── */}
                     <View>
-                        <SectionLabel>Description</SectionLabel>
-                        <FormInput
-                            placeholder="Describe the property..."
-                            value={form.description}
-                            onChangeText={(v) => updateForm({ description: v })}
-                            multiline
-                            height={96}
-                        />
-                    </View>
-
-                    {/* ── Price ─────────────────────────────────── */}
-                    <View>
-                        <SectionLabel>Price (PKR)</SectionLabel>
-                        <FormInput
-                            placeholder="e.g. 5000000"
-                            value={form.price}
-                            onChangeText={(v) => updateForm({ price: v })}
-                            keyboardType="numeric"
-                            autoCapitalize="none"
-                        />
-                    </View>
-
-                    {/* ── Property Type ─────────────────────────── */}
-                    <View>
-                        <SectionLabel>Property Type</SectionLabel>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
+                        <FormSectionLabel>Property Type</FormSectionLabel>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm }}>
                             {LISTING_PROPERTY_OPTIONS.map((option) => {
                                 const active = form.type === option.value;
                                 return (
@@ -389,21 +468,22 @@ export default function AddListingScreen() {
                                         key={option.label}
                                         onPress={() => updateForm({ type: option.value })}
                                         style={{
-                                            alignItems: 'center', justifyContent: 'center',
-                                            width: 76, height: 76, borderRadius: 16,
-                                            backgroundColor: active ? C.pine : C.white,
-                                            borderWidth: active ? 0 : 1, borderColor: C.border,
-                                            shadowColor: active ? C.pine : '#000',
-                                            shadowOffset: { width: 0, height: active ? 4 : 1 },
-                                            shadowOpacity: active ? 0.25 : 0.04,
-                                            shadowRadius: active ? 8 : 4,
-                                            elevation: active ? 4 : 1,
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: 74,
+                                            paddingVertical: spacing.md,
+                                            borderRadius: radius.sm,
+                                            backgroundColor: active ? colors.brand : colors.surface,
+                                            borderWidth: 1,
+                                            borderColor: active ? colors.brand : colors.border,
                                         }}
                                     >
-                                        <Ionicons name={option.icon} size={22} color={active ? C.green : C.textSub} />
+                                        <Ionicons name={option.icon} size={20} color={active ? colors.surface : colors.textMuted} />
                                         <Text style={{
-                                            fontSize: 11, fontWeight: '700', marginTop: 6,
-                                            color: active ? C.white : C.textSub,
+                                            fontFamily: fonts.bodyM,
+                                            fontSize: fontSize.micro,
+                                            marginTop: spacing.xs,
+                                            color: active ? colors.surface : colors.textSecondary,
                                         }}>
                                             {option.label}
                                         </Text>
@@ -413,15 +493,18 @@ export default function AddListingScreen() {
                         </ScrollView>
                     </View>
 
-                    {/* ── Bedrooms / Bathrooms ──────────────────── */}
-                    <View style={{ flexDirection: 'row', gap: 14 }}>
-                        <Stepper label="Bedrooms" value={form.bedrooms} onChange={(v) => updateForm({ bedrooms: v })} />
-                        <Stepper label="Bathrooms" value={form.bathrooms} onChange={(v) => updateForm({ bathrooms: v })} />
+                    {/* ── Bedrooms / Bathrooms ──────────────── */}
+                    <View>
+                        <FormSectionLabel>Property Details</FormSectionLabel>
+                        <View style={{ flexDirection: 'row', gap: spacing.lg }}>
+                            <Stepper label="Bedrooms" value={form.bedrooms} onChange={(v) => updateForm({ bedrooms: v })} />
+                            <Stepper label="Bathrooms" value={form.bathrooms} onChange={(v) => updateForm({ bathrooms: v })} />
+                        </View>
                     </View>
 
-                    {/* ── Area ──────────────────────────────────── */}
+                    {/* ── Area ──────────────────────────────── */}
                     <View>
-                        <SectionLabel>Area (sq ft)</SectionLabel>
+                        <FormSectionLabel>Area (sq ft)</FormSectionLabel>
                         <FormInput
                             placeholder="e.g. 1200"
                             value={form.areaSqft}
@@ -431,50 +514,63 @@ export default function AddListingScreen() {
                         />
                     </View>
 
-                    {/* ── Address ───────────────────────────────── */}
+                    {/* ── Location ──────────────────────────── */}
                     <View>
-                        <SectionLabel>Address</SectionLabel>
-                        <FormInput
-                            placeholder="Street address"
-                            value={form.address}
-                            onChangeText={(v) => updateForm({ address: v })}
-                        />
+                        <FormSectionLabel>Location</FormSectionLabel>
+                        <View style={{ gap: spacing.lg }}>
+                            <FormInput
+                                placeholder="Street address"
+                                value={form.address}
+                                onChangeText={(v) => updateForm({ address: v })}
+                            />
+                            <FormInput
+                                placeholder="City (e.g. Lahore)"
+                                value={form.city}
+                                onChangeText={(v) => updateForm({ city: v })}
+                            />
+                        </View>
                     </View>
 
-                    {/* ── City ──────────────────────────────────── */}
+                    {/* ── Coordinates ───────────────────────── */}
                     <View>
-                        <SectionLabel>City</SectionLabel>
-                        <FormInput
-                            placeholder="e.g. Lahore"
-                            value={form.city}
-                            onChangeText={(v) => updateForm({ city: v })}
-                        />
-                    </View>
-
-                    {/* ── Coordinates ───────────────────────────── */}
-                    <View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                            <SectionLabel>Coordinates</SectionLabel>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
+                            <Text style={{
+                                fontFamily: fonts.bodySB,
+                                fontSize: fontSize.nano,
+                                color: colors.textMuted,
+                                letterSpacing: 1.2,
+                                textTransform: 'uppercase',
+                            }}>
+                                Coordinates
+                            </Text>
                             <TouchableOpacity
                                 onPress={handleDetectLocation}
                                 disabled={isDetectingLocation}
                                 style={{
-                                    flexDirection: 'row', alignItems: 'center', gap: 6,
-                                    backgroundColor: C.tealMuted,
-                                    paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20,
+                                    flexDirection: 'row', alignItems: 'center', gap: spacing.xs,
+                                    backgroundColor: colors.brandSubtle,
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(107,122,87,0.15)',
+                                    paddingHorizontal: spacing.md,
+                                    paddingVertical: spacing.sm,
+                                    borderRadius: radius.xs,
                                 }}
                             >
                                 {isDetectingLocation ? (
-                                    <ActivityIndicator size="small" color={C.teal} />
+                                    <ActivityIndicator size="small" color={colors.brand} />
                                 ) : (
-                                    <Ionicons name="locate-outline" size={13} color={C.teal} />
+                                    <Ionicons name="locate-outline" size={13} color={colors.brand} />
                                 )}
-                                <Text style={{ color: C.teal, fontSize: 12, fontWeight: '700' }}>
+                                <Text style={{
+                                    fontFamily: fonts.bodyM,
+                                    color: colors.brand,
+                                    fontSize: fontSize.caption,
+                                }}>
                                     {isDetectingLocation ? "Detecting..." : "Detect Location"}
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ flexDirection: 'row', gap: 12 }}>
+                        <View style={{ flexDirection: 'row', gap: spacing.md }}>
                             <View style={{ flex: 1 }}>
                                 <FormInput
                                     placeholder="Latitude"
@@ -496,68 +592,81 @@ export default function AddListingScreen() {
                         </View>
                     </View>
 
-                    {/* ── Featured toggle ───────────────────────── */}
+                    {/* ── Featured toggle ───────────────────── */}
                     <TouchableOpacity
                         onPress={() => updateForm({ isFeatured: !form.isFeatured })}
                         style={{
                             flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-                            backgroundColor: C.white,
-                            borderRadius: 14, padding: 16,
-                            borderWidth: 1, borderColor: form.isFeatured ? C.teal : C.border,
+                            backgroundColor: colors.surface,
+                            borderRadius: radius.sm, padding: spacing.lg,
+                            borderWidth: 1,
+                            borderColor: form.isFeatured ? 'rgba(201,164,106,0.25)' : colors.border,
                         }}
                     >
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                            <View style={{
-                                width: 38, height: 38, borderRadius: 10,
-                                backgroundColor: form.isFeatured ? C.tealMuted : C.sage,
-                                alignItems: 'center', justifyContent: 'center',
-                            }}>
-                                <Ionicons name="star-outline" size={18} color={form.isFeatured ? C.teal : C.textMuted} />
-                            </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+                            <Ionicons
+                                name={form.isFeatured ? "star" : "star-outline"}
+                                size={18}
+                                color={form.isFeatured ? colors.accentGold : colors.textMuted}
+                            />
                             <View>
-                                <Text style={{ fontSize: 14, fontWeight: '700', color: C.textMain }}>Feature this listing</Text>
-                                <Text style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>Shown in Home's Featured row</Text>
+                                <Text style={{
+                                    fontFamily: fonts.bodySB,
+                                    fontSize: fontSize.body,
+                                    color: colors.textPrimary,
+                                }}>
+                                    Feature this listing
+                                </Text>
+                                <Text style={{
+                                    fontFamily: fonts.body,
+                                    fontSize: fontSize.caption,
+                                    color: colors.textMuted,
+                                    marginTop: 2,
+                                }}>
+                                    Shown in Home's Featured row
+                                </Text>
                             </View>
                         </View>
                         {/* Toggle pill */}
                         <View style={{
-                            width: 48, height: 28, borderRadius: 14, padding: 3,
-                            backgroundColor: form.isFeatured ? C.teal : C.border,
+                            width: 44, height: 26, borderRadius: 13, padding: 3,
+                            backgroundColor: form.isFeatured ? colors.brand : colors.border,
                             justifyContent: 'center',
                         }}>
                             <View style={{
-                                width: 22, height: 22, borderRadius: 11,
-                                backgroundColor: C.white,
-                                marginLeft: form.isFeatured ? 20 : 0,
+                                width: 20, height: 20, borderRadius: 10,
+                                backgroundColor: colors.surface,
+                                marginLeft: form.isFeatured ? 18 : 0,
                             }} />
                         </View>
                     </TouchableOpacity>
 
-                    {/* ── Submit ────────────────────────────────── */}
+                    {/* ── Submit ────────────────────────────── */}
                     <TouchableOpacity
                         onPress={handleSubmit}
                         disabled={isSubmitting || isUploadingImages}
                         style={{
-                            backgroundColor: C.pine,
-                            borderRadius: 14,
-                            paddingVertical: 16,
+                            backgroundColor: colors.brand,
+                            borderRadius: radius.md,
+                            height: 50,
                             alignItems: 'center', justifyContent: 'center',
-                            flexDirection: 'row', gap: 10,
-                            opacity: isSubmitting || isUploadingImages ? 0.6 : 1,
-                            shadowColor: C.pine,
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.35,
-                            shadowRadius: 10,
-                            elevation: 6,
-                            marginTop: 4,
+                            flexDirection: 'row', gap: spacing.sm,
+                            opacity: isSubmitting || isUploadingImages ? 0.55 : 1,
+                            marginTop: spacing.xs,
                         }}
                     >
                         {isSubmitting ? (
-                            <ActivityIndicator color={C.white} />
+                            <ActivityIndicator color={colors.surface} />
                         ) : (
                             <>
-                                <Ionicons name="cloud-upload-outline" size={19} color={C.green} />
-                                <Text style={{ color: C.white, fontWeight: '800', fontSize: 16 }}>Publish Listing</Text>
+                                <Ionicons name="cloud-upload-outline" size={18} color={colors.surface} />
+                                <Text style={{
+                                    fontFamily: fonts.bodySB,
+                                    color: colors.surface,
+                                    fontSize: fontSize.bodyLg,
+                                }}>
+                                    Publish Listing
+                                </Text>
                             </>
                         )}
                     </TouchableOpacity>

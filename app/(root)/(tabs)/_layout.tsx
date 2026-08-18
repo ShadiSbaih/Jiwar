@@ -1,12 +1,14 @@
 import { userUserStore } from "@/store/userStore";
+import { colors, fonts, fontSize, heights, spacing } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const ACTIVE_COLOR = "#1C685D";
-const INACTIVE_COLOR = "#6B7280";
+// Desert Minimal navigation colors
+const ACTIVE_COLOR = colors.brand;      // Olive
+const INACTIVE_COLOR = colors.textMuted; // Stone
 
 export function IOSTabLayout() {
   const isAdmin = userUserStore((state) => state.isAdmin);
@@ -23,7 +25,7 @@ export function IOSTabLayout() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="favorites">
         <Icon sf="heart.fill" />
-        <Label>Favorites</Label>
+        <Label>Saved</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
         <Icon sf="person.fill" />
@@ -48,21 +50,28 @@ function AndroidTabLayout() {
       screenOptions={{
         headerShown: false,
         animation: "fade",
-        tabBarActiveTintColor: "#4ADE80",
-        tabBarInactiveTintColor: "#4A6B60",
+        tabBarActiveTintColor: ACTIVE_COLOR,
+        tabBarInactiveTintColor: INACTIVE_COLOR,
         tabBarStyle: {
-          backgroundColor: "#061F22",
-          borderTopWidth: 0,
-          height: 62 + insets.bottom,
-          paddingTop: 8,
-          paddingBottom: 10 + insets.bottom,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 12,
-          elevation: 20,
+          backgroundColor: colors.surface,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+          height: heights.navBar + insets.bottom,
+          paddingTop: spacing.sm,
+          paddingBottom: spacing.sm + insets.bottom,
+          // No heavy shadows — subtle border does the separation
+          shadowColor: colors.textPrimary,
+          shadowOffset: { width: 0, height: -1 },
+          shadowOpacity: 0.04,
+          shadowRadius: 4,
+          elevation: 4,
         },
-        tabBarLabelStyle: { fontSize: 10, fontWeight: "700", letterSpacing: 0.3, marginTop: 3 },
+        tabBarLabelStyle: {
+          fontFamily: fonts.bodyM,
+          fontSize: fontSize.micro,
+          letterSpacing: 0.2,
+          marginTop: 2,
+        },
       }}
     >
       <Tabs.Screen

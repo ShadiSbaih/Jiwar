@@ -1,30 +1,23 @@
 import { useSavedProperty } from '@/hooks/useSavedProperty';
 import { formatPrice } from '@/lib/utils';
 import { Property } from '@/types';
+import { colors, fonts, fontSize, radius, shadows, spacing } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
 import { Animated, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 export default function PropertyCard({ property, onUnSave, showSave = false }: {
-    property: Property
+    property: Property;
     onUnSave?: () => void;
     showSave?: boolean;
 }) {
     const router = useRouter();
-    const { isSaved, saveLoading, toggleSave } = useSavedProperty(
-        property.id,
-        onUnSave,
-    );
+    const { isSaved, saveLoading, toggleSave } = useSavedProperty(property.id, onUnSave);
 
     const scale = useRef(new Animated.Value(1)).current;
-
-    const onPressIn = () => {
-        Animated.spring(scale, { toValue: 0.975, useNativeDriver: true }).start();
-    };
-    const onPressOut = () => {
-        Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
-    };
+    const onPressIn = () => Animated.spring(scale, { toValue: 0.975, useNativeDriver: true, speed: 20 }).start();
+    const onPressOut = () => Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 20 }).start();
 
     return (
         <TouchableWithoutFeedback
@@ -34,125 +27,169 @@ export default function PropertyCard({ property, onUnSave, showSave = false }: {
         >
             <Animated.View
                 style={{
-                    opacity: property.is_sold ? 0.6 : 1,
+                    opacity: property.is_sold ? 0.55 : 1,
                     transform: [{ scale }],
-                    backgroundColor: '#FFFFFF',
-                    borderRadius: 20,
-                    marginBottom: 16,
+                    backgroundColor: colors.surface,
+                    borderRadius: radius.lg,
+                    marginBottom: spacing.itemGap,
                     overflow: 'hidden',
-                    shadowColor: '#08383C',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.08,
-                    shadowRadius: 12,
-                    elevation: 3,
+                    borderWidth: 1,
+                    borderColor: colors.border,
+                    ...shadows.card,
                 }}
             >
-                {/* Top image — 16:9 ratio */}
+                {/* Property photograph */}
                 <View style={{ position: 'relative' }}>
                     <Image
                         source={{ uri: property.images[0] }}
-                        style={{ width: '100%', height: 190 }}
+                        style={{ width: '100%', height: 192 }}
                         resizeMode="cover"
                     />
 
-                    {/* Type badge — top left */}
-                    <View
-                        style={{
-                            position: 'absolute',
-                            top: 12,
-                            left: 12,
-                            backgroundColor: 'rgba(8,56,60,0.82)',
-                            paddingHorizontal: 10,
-                            paddingVertical: 4,
-                            borderRadius: 100,
-                        }}
-                    >
-                        <Text style={{ color: '#E8F3F1', fontSize: 11, fontWeight: '700', textTransform: 'capitalize', letterSpacing: 0.5 }}>
-                            {property.type}
-                        </Text>
-                    </View>
+                    {/* Sold overlay — top right */}
+                    {property.is_sold && (
+                        <View
+                            style={{
+                                position: 'absolute',
+                                top: spacing.md,
+                                right: showSave ? 52 : spacing.md,
+                                backgroundColor: colors.errorBg,
+                                borderWidth: 1,
+                                borderColor: 'rgba(180,68,53,0.20)',
+                                paddingHorizontal: spacing.md,
+                                paddingVertical: 4,
+                                borderRadius: radius.xs,
+                            }}
+                        >
+                            <Text style={{
+                                fontFamily: fonts.bodySB,
+                                color: colors.error,
+                                fontSize: fontSize.micro,
+                                letterSpacing: 0.6,
+                                textTransform: 'uppercase',
+                            }}>
+                                Sold
+                            </Text>
+                        </View>
+                    )}
 
-                    {/* Save button — top right */}
+                    {/* Save button */}
                     {showSave && (
                         <TouchableOpacity
                             onPress={toggleSave}
                             disabled={saveLoading}
                             style={{
                                 position: 'absolute',
-                                top: 10,
-                                right: 10,
-                                width: 34,
-                                height: 34,
-                                borderRadius: 17,
-                                backgroundColor: 'rgba(255,255,255,0.9)',
+                                top: spacing.sm,
+                                right: spacing.sm,
+                                width: 36,
+                                height: 36,
+                                borderRadius: radius.sm,
+                                backgroundColor: 'rgba(255,255,255,0.92)',
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                borderWidth: 1,
+                                borderColor: colors.border,
                             }}
                         >
                             <Ionicons
                                 name={isSaved ? 'heart' : 'heart-outline'}
-                                size={16}
-                                color={isSaved ? '#1C685D' : '#9CA3AF'}
+                                size={17}
+                                color={isSaved ? colors.error : colors.textMuted}
                             />
                         </TouchableOpacity>
-                    )}
-
-                    {/* Sold overlay */}
-                    {property.is_sold && (
-                        <View
-                            style={{
-                                position: 'absolute',
-                                top: 12,
-                                right: showSave ? 52 : 12,
-                                backgroundColor: 'rgba(220,38,38,0.88)',
-                                paddingHorizontal: 10,
-                                paddingVertical: 4,
-                                borderRadius: 100,
-                            }}
-                        >
-                            <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '700', letterSpacing: 0.5 }}>SOLD</Text>
-                        </View>
                     )}
                 </View>
 
                 {/* Card body */}
-                <View style={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: 16 }}>
+                <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.lg }}>
+                    {/* Type label + Featured badge in one row */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.xs }}>
+                        <Text style={{
+                            fontFamily: fonts.bodySB,
+                            fontSize: fontSize.micro,
+                            color: colors.textMuted,
+                            textTransform: 'capitalize',
+                            letterSpacing: 0.4,
+                        }}>
+                            {property.type}
+                        </Text>
+                        {property.is_featured && (
+                            <>
+                                <View style={{ width: 3, height: 3, borderRadius: 2, backgroundColor: colors.accentGold }} />
+                                <Text style={{
+                                    fontFamily: fonts.bodyM,
+                                    fontSize: fontSize.micro,
+                                    color: colors.accentGold,
+                                }}>
+                                    Featured
+                                </Text>
+                            </>
+                        )}
+                    </View>
+
                     {/* Title */}
                     <Text
                         numberOfLines={1}
-                        style={{ fontSize: 15, fontWeight: '700', color: '#0F1712', marginBottom: 4 }}
+                        style={{
+                            fontFamily: fonts.bodySB,
+                            fontSize: fontSize.bodyLg,
+                            color: colors.textPrimary,
+                            marginBottom: spacing.xs,
+                        }}
                     >
                         {property.title}
                     </Text>
 
                     {/* Location */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 12 }}>
-                        <Ionicons name="location-outline" size={12} color="#9CA3AF" />
-                        <Text numberOfLines={1} style={{ fontSize: 13, color: '#9CA3AF', flex: 1 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: spacing.md }}>
+                        <Ionicons name="location-outline" size={12} color={colors.textMuted} />
+                        <Text numberOfLines={1} style={{
+                            fontFamily: fonts.body,
+                            fontSize: fontSize.caption,
+                            color: colors.textMuted,
+                            flex: 1,
+                        }}>
                             {property.city}
                         </Text>
                     </View>
 
-                    {/* Price + specs row */}
+                    {/* Price + specs */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 17, fontWeight: '800', color: '#1C685D' }}>
+                        <Text style={{
+                            fontFamily: fonts.bodySB,
+                            fontSize: fontSize.title,
+                            color: colors.brand,
+                        }}>
                             {formatPrice(property.price)}
                         </Text>
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                                <Ionicons name="bed-outline" size={13} color="#6B7280" />
-                                <Text style={{ fontSize: 12, color: '#6B7280', fontWeight: '600' }}>
-                                    {property.bedrooms}
-                                </Text>
-                            </View>
-                            <View style={{ width: 1, height: 12, backgroundColor: '#E5E7EB' }} />
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                                <Ionicons name="expand-outline" size={13} color="#6B7280" />
-                                <Text style={{ fontSize: 12, color: '#6B7280', fontWeight: '600' }}>
-                                    {property.area_sqft} ft²
-                                </Text>
-                            </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+                            {property.bedrooms != null && (
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                    <Ionicons name="bed-outline" size={13} color={colors.textMuted} />
+                                    <Text style={{
+                                        fontFamily: fonts.bodyM,
+                                        fontSize: fontSize.caption,
+                                        color: colors.textMuted,
+                                    }}>
+                                        {property.bedrooms}
+                                    </Text>
+                                </View>
+                            )}
+                            <View style={{ width: 1, height: 12, backgroundColor: colors.border }} />
+                            {property.area_sqft && (
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                    <Ionicons name="expand-outline" size={13} color={colors.textMuted} />
+                                    <Text style={{
+                                        fontFamily: fonts.bodyM,
+                                        fontSize: fontSize.caption,
+                                        color: colors.textMuted,
+                                    }}>
+                                        {property.area_sqft} ft²
+                                    </Text>
+                                </View>
+                            )}
                         </View>
                     </View>
                 </View>

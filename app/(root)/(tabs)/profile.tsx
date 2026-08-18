@@ -3,20 +3,27 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Image, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+    ActivityIndicator, Alert, Image, Linking, ScrollView,
+    Text, TouchableOpacity, View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { userUserStore } from '@/store/userStore';
+import { colors, fonts, fontSize, radius, spacing } from '@/constants/theme';
 
+// ─── Menu Item ────────────────────────────────────────────────────────────────
 function MenuItem({
     icon,
     label,
     onPress,
     danger = false,
+    last = false,
 }: {
     icon: keyof typeof Ionicons.glyphMap;
     label: string;
     onPress?: () => void;
     danger?: boolean;
+    last?: boolean;
 }) {
     return (
         <TouchableOpacity
@@ -24,37 +31,62 @@ function MenuItem({
             style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: 14,
-                backgroundColor: '#FFFFFF',
-                paddingHorizontal: 16,
-                paddingVertical: 15,
-                borderRadius: 14,
-                marginBottom: 10,
-                shadowColor: '#08383C',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.04,
-                shadowRadius: 6,
-                elevation: 1,
+                gap: spacing.lg,
+                paddingHorizontal: spacing.lg,
+                paddingVertical: spacing.lg,
+                backgroundColor: colors.surface,
+                borderBottomWidth: last ? 0 : 1,
+                borderBottomColor: colors.border,
             }}
         >
-            <View style={{
-                width: 36,
-                height: 36,
-                borderRadius: 10,
-                backgroundColor: danger ? '#FEF2F2' : '#E8F3F1',
-                alignItems: 'center',
-                justifyContent: 'center',
+            <Ionicons
+                name={icon}
+                size={18}
+                color={danger ? colors.error : colors.textMuted}
+            />
+            <Text style={{
+                flex: 1,
+                fontFamily: fonts.bodyM,
+                fontSize: fontSize.body,
+                color: danger ? colors.error : colors.textPrimary,
             }}>
-                <Ionicons name={icon} size={17} color={danger ? '#EF4444' : '#1C685D'} />
-            </View>
-            <Text style={{ flex: 1, fontSize: 15, fontWeight: '600', color: danger ? '#EF4444' : '#0F1712' }}>
                 {label}
             </Text>
-            {!danger && <Ionicons name="chevron-forward" size={16} color="#D1D5DB" />}
+            {!danger && (
+                <Ionicons name="chevron-forward" size={15} color={colors.textMuted} />
+            )}
         </TouchableOpacity>
     );
 }
 
+// ─── Section Group ─────────────────────────────────────────────────────────────
+function MenuSection({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+        <View style={{ marginBottom: spacing.sectionGap }}>
+            <Text style={{
+                fontFamily: fonts.bodySB,
+                fontSize: fontSize.nano,
+                color: colors.textMuted,
+                letterSpacing: 1.2,
+                textTransform: 'uppercase',
+                paddingHorizontal: spacing.pageHorizontal,
+                marginBottom: spacing.sm,
+            }}>
+                {title}
+            </Text>
+            <View style={{
+                borderTopWidth: 1,
+                borderBottomWidth: 1,
+                borderColor: colors.border,
+                backgroundColor: colors.surface,
+            }}>
+                {children}
+            </View>
+        </View>
+    );
+}
+
+// ─── Profile Screen ───────────────────────────────────────────────────────────
 export default function ProfileScreen() {
     const { user, isLoaded } = useUser();
     const isAdmin = userUserStore((state) => state.isAdmin);
@@ -100,23 +132,58 @@ export default function ProfileScreen() {
 
     if (!isLoaded || !user) {
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F8F6', alignItems: 'center', justifyContent: 'center' }}>
-                <ActivityIndicator size="large" color="#1C685D" />
+            <SafeAreaView style={{ flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }}>
+                <ActivityIndicator size="large" color={colors.brand} />
             </SafeAreaView>
         );
     }
 
+    const isVerified = user.emailAddresses[0]?.verification?.status === 'verified';
+
     return (
-        <View style={{ flex: 1, backgroundColor: '#F5F8F6' }}>
-            {/* Header — Pine green with centered avatar */}
-            <SafeAreaView edges={['top']} style={{ backgroundColor: '#08383C' }}>
-                <View style={{ alignItems: 'center', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 28 }}>
-                    {/* Avatar */}
-                    <View style={{ position: 'relative', marginBottom: 14 }}>
-                        <Image
-                            source={{ uri: user.imageUrl }}
-                            style={{ width: 88, height: 88, borderRadius: 44, borderWidth: 3, borderColor: '#1C685D' }}
-                        />
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+            <SafeAreaView edges={['top']} style={{ backgroundColor: colors.background }}>
+                {/* ── Profile card — ivory, no dark block ── */}
+                <View style={{
+                    paddingHorizontal: spacing.pageHorizontal,
+                    paddingTop: spacing.xl,
+                    paddingBottom: spacing.xxl,
+                    alignItems: 'center',
+                    borderBottomWidth: 1,
+                    borderBottomColor: colors.border,
+                }}>
+                    {/* Avatar with camera button */}
+                    <View style={{ position: 'relative', marginBottom: spacing.lg }}>
+                        <View style={{
+                            width: 84,
+                            height: 84,
+                            borderRadius: 42,
+                            overflow: 'hidden',
+                            borderWidth: 1,
+                            borderColor: colors.borderStrong,
+                        }}>
+                            {user.imageUrl ? (
+                                <Image
+                                    source={{ uri: user.imageUrl }}
+                                    style={{ width: 84, height: 84 }}
+                                />
+                            ) : (
+                                <View style={{
+                                    flex: 1,
+                                    backgroundColor: colors.brandSubtle,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    <Text style={{
+                                        fontFamily: fonts.displaySB,
+                                        fontSize: fontSize.h2,
+                                        color: colors.brand,
+                                    }}>
+                                        {user.firstName?.charAt(0) ?? '?'}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
                         <TouchableOpacity
                             onPress={handleChangePhoto}
                             disabled={isUpdatingPhoto}
@@ -127,52 +194,82 @@ export default function ProfileScreen() {
                                 width: 28,
                                 height: 28,
                                 borderRadius: 14,
-                                backgroundColor: '#1C685D',
+                                backgroundColor: colors.surface,
+                                borderWidth: 1,
+                                borderColor: colors.borderStrong,
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                borderWidth: 2,
-                                borderColor: '#08383C',
                             }}
                         >
                             {isUpdatingPhoto ? (
-                                <ActivityIndicator size="small" color="#FFFFFF" />
+                                <ActivityIndicator size="small" color={colors.brand} />
                             ) : (
-                                <Ionicons name="camera" size={13} color="#FFFFFF" />
+                                <Ionicons name="camera-outline" size={13} color={colors.textSecondary} />
                             )}
                         </TouchableOpacity>
                     </View>
 
-                    {/* Name + badge */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                        <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: '800' }}>
-                            {user.firstName} {user.lastName}
-                        </Text>
+                    {/* Name */}
+                    <Text style={{
+                        fontFamily: fonts.display,
+                        fontSize: fontSize.h3,
+                        color: colors.textPrimary,
+                        marginBottom: 4,
+                        textAlign: 'center',
+                    }}>
+                        {user.firstName} {user.lastName}
+                    </Text>
 
-                    </View>
-                    <Text style={{ color: '#9CA3AF', fontSize: 13, marginBottom: 10 }}>
+                    {/* Email */}
+                    <Text style={{
+                        fontFamily: fonts.body,
+                        fontSize: fontSize.caption,
+                        color: colors.textMuted,
+                        marginBottom: spacing.md,
+                    }}>
                         {user.emailAddresses[0].emailAddress}
                     </Text>
-                    <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 5,
-                        backgroundColor: 'rgba(28,104,93,0.25)',
-                        paddingHorizontal: 12,
-                        paddingVertical: 5,
-                        borderRadius: 100,
-                    }}>
-                        <Ionicons name="checkmark-circle" size={13} color="#4ADE80" />
-                        <Text style={{ color: '#4ADE80', fontSize: 12, fontWeight: '700' }}>Verified Member</Text>
+
+                    {/* Verified badge + Admin badge */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+                        {isVerified && (
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 4,
+                                backgroundColor: colors.brandSubtle,
+                                paddingHorizontal: spacing.md,
+                                paddingVertical: 4,
+                                borderRadius: radius.xs,
+                                borderWidth: 1,
+                                borderColor: 'rgba(107,122,87,0.15)',
+                            }}>
+                                <Ionicons name="checkmark-circle" size={12} color={colors.brand} />
+                                <Text style={{
+                                    fontFamily: fonts.bodyM,
+                                    fontSize: fontSize.micro,
+                                    color: colors.brand,
+                                }}>
+                                    Verified
+                                </Text>
+                            </View>
+                        )}
                         {isAdmin && (
                             <View style={{
-                                backgroundColor: 'rgba(74, 222, 128, 0.15)',
-                                paddingHorizontal: 8,
-                                paddingVertical: 3,
-                                borderRadius: 8,
+                                backgroundColor: 'rgba(201,164,106,0.10)',
+                                paddingHorizontal: spacing.md,
+                                paddingVertical: 4,
+                                borderRadius: radius.xs,
                                 borderWidth: 1,
-                                borderColor: 'rgba(74, 222, 128, 0.3)'
+                                borderColor: 'rgba(201,164,106,0.20)',
                             }}>
-                                <Text style={{ color: '#4ADE80', fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                <Text style={{
+                                    fontFamily: fonts.bodySB,
+                                    fontSize: fontSize.micro,
+                                    color: colors.accentGold,
+                                    letterSpacing: 0.5,
+                                    textTransform: 'uppercase',
+                                }}>
                                     Admin
                                 </Text>
                             </View>
@@ -181,12 +278,12 @@ export default function ProfileScreen() {
                 </View>
             </SafeAreaView>
 
-            {/* Menu items */}
-            <View style={{ flex: 1 }}>
-                <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 110 }}>
-                    <Text style={{ fontSize: 11, fontWeight: '700', color: '#9CA3AF', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 12 }}>
-                        Account
-                    </Text>
+            {/* ── Menu items ── */}
+            <ScrollView
+                contentContainerStyle={{ paddingTop: spacing.xxl, paddingBottom: 100 }}
+                showsVerticalScrollIndicator={false}
+            >
+                <MenuSection title="Account">
                     <MenuItem
                         icon="bookmark-outline"
                         label="Saved Properties"
@@ -196,11 +293,11 @@ export default function ProfileScreen() {
                         icon="time-outline"
                         label="Recently Viewed"
                         onPress={() => Alert.alert('Coming Soon', 'This feature is coming soon!')}
+                        last
                     />
+                </MenuSection>
 
-                    <Text style={{ fontSize: 11, fontWeight: '700', color: '#9CA3AF', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 12, marginTop: 8 }}>
-                        General
-                    </Text>
+                <MenuSection title="General">
                     <MenuItem
                         icon="shield-checkmark-outline"
                         label="Privacy & Security"
@@ -220,19 +317,20 @@ export default function ProfileScreen() {
                         icon="information-circle-outline"
                         label="About Jiwar"
                         onPress={() => Alert.alert('Jiwar', 'Version 1.0.0\n\nYour premium home search companion.')}
+                        last
                     />
+                </MenuSection>
 
-                    {/* Sign out */}
-                    <View style={{ marginTop: 20 }}>
-                        <MenuItem
-                            icon="log-out-outline"
-                            label="Sign Out"
-                            onPress={handleSignOut}
-                            danger
-                        />
-                    </View>
-                </ScrollView>
-            </View>
+                <MenuSection title="Account">
+                    <MenuItem
+                        icon="log-out-outline"
+                        label="Sign Out"
+                        onPress={handleSignOut}
+                        danger
+                        last
+                    />
+                </MenuSection>
+            </ScrollView>
         </View>
     );
 }

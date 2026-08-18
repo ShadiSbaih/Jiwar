@@ -1,8 +1,10 @@
 import FeaturedCard from '@/components/FeaturedCard';
 import PropertyCard from '@/components/PropertyCard';
 import { FeaturedCardSkeleton, PropertyCardSkeleton } from '@/components/SkeletonCard';
+import { SectionHeader } from '@/components/DesignSystem';
 import { fetchFeaturedProperties, fetchRecommendedProperties } from '@/services/properties';
 import { Property } from '@/types';
+import { colors, fonts, fontSize, radius, shadows, spacing } from '@/constants/theme';
 import { useUser } from '@clerk/expo';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -28,46 +30,69 @@ export default function HomeScreen() {
         setFeaturedProperties(featured);
         setRecommendedProperties(recommended);
         setIsLoading(false);
-    }
+    };
 
     useFocusEffect(
         useCallback(() => {
             loadHomes();
         }, [])
-    )
+    );
+
+    const greeting = () => {
+        const h = new Date().getHours();
+        if (h < 12) return 'Good morning';
+        if (h < 17) return 'Good afternoon';
+        return 'Good evening';
+    };
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#F5F8F6' }}>
-            {/* Header — deep pine */}
-            <SafeAreaView edges={["top"]} style={{ backgroundColor: '#08383C' }}>
-                <View style={{ paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20 }}>
-                    {/* Top row: logo mark left, greeting + avatar right */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
-                        {/* Brand mark */}
-                        <View>
-                            <Text style={{ color: '#FFFFFF', fontSize: 22, fontWeight: '900', letterSpacing: -0.5 }}>Jiwar</Text>
-                        </View>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+            {/* ── Header area — warm ivory, NOT dark green ── */}
+            <SafeAreaView edges={['top']} style={{ backgroundColor: colors.background }}>
+                <View style={{ paddingHorizontal: spacing.pageHorizontal, paddingTop: spacing.sm, paddingBottom: spacing.xl }}>
+                    {/* Top row: wordmark + avatar */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.xl }}>
+                        {/* Brand wordmark */}
+                        <Text style={{
+                            fontFamily: fonts.displaySB,
+                            fontSize: 26,
+                            color: colors.textPrimary,
+                            letterSpacing: -0.5,
+                        }}>
+                            Jiwar
+                        </Text>
 
-                        {/* Greeting + avatar */}
-                        <TouchableOpacity 
+                        {/* Avatar button → Profile */}
+                        <TouchableOpacity
                             onPress={() => router.push('/(root)/(tabs)/profile')}
-                            style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}
+                            style={{ alignItems: 'center', justifyContent: 'center' }}
                         >
-                            <View style={{ alignItems: 'flex-end' }}>
-                                <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '700' }}>
-                                    Hi {user?.firstName ?? 'there'} 👋
-                                </Text>
-                                <Text style={{ color: '#6DAF96', fontSize: 11, marginTop: 1 }}>
-                                    Welcome back
-                                </Text>
-                            </View>
-                            <View style={{ width: 42, height: 42, borderRadius: 21, borderWidth: 2, borderColor: '#4ADE80', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 20,
+                                overflow: 'hidden',
+                                borderWidth: 1,
+                                borderColor: colors.borderStrong,
+                            }}>
                                 {user?.imageUrl ? (
-                                    <Image source={{ uri: user.imageUrl }} style={{ width: 38, height: 38, borderRadius: 19 }} />
+                                    <Image
+                                        source={{ uri: user.imageUrl }}
+                                        style={{ width: 40, height: 40 }}
+                                    />
                                 ) : (
-                                    <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: '#1C685D', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>
-                                            {user?.firstName?.charAt(0)}
+                                    <View style={{
+                                        flex: 1,
+                                        backgroundColor: colors.brandSubtle,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}>
+                                        <Text style={{
+                                            fontFamily: fonts.bodySB,
+                                            fontSize: fontSize.body,
+                                            color: colors.brand,
+                                        }}>
+                                            {user?.firstName?.charAt(0) ?? '?'}
                                         </Text>
                                     </View>
                                 )}
@@ -75,103 +100,144 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                     </View>
 
+                    {/* Greeting — Playfair Display */}
+                    <Text style={{
+                        fontFamily: fonts.displayI,
+                        fontSize: fontSize.h2,
+                        color: colors.textPrimary,
+                        marginBottom: 3,
+                    }}>
+                        {greeting()},
+                    </Text>
+                    <Text style={{
+                        fontFamily: fonts.display,
+                        fontSize: fontSize.h1,
+                        color: colors.textPrimary,
+                        marginBottom: spacing.xl,
+                    }}>
+                        {user?.firstName ?? 'there'}.
+                    </Text>
+
                     {/* Search bar */}
                     <TouchableOpacity
                         onPress={() => router.push('/(root)/(tabs)/explore')}
                         style={{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            backgroundColor: '#FFFFFF',
-                            borderRadius: 14,
-                            paddingLeft: 14,
-                            paddingRight: 6,
-                            paddingVertical: 6,
-                            gap: 10,
-                            shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 2 },
-                            shadowOpacity: 0.08,
-                            shadowRadius: 8,
-                            elevation: 3,
+                            backgroundColor: colors.surface,
+                            borderRadius: radius.sm,
+                            borderWidth: 1,
+                            borderColor: colors.borderStrong,
+                            paddingLeft: spacing.lg,
+                            paddingRight: spacing.sm,
+                            paddingVertical: spacing.sm,
+                            gap: spacing.md,
+                            ...shadows.subtle,
                         }}
                     >
-                        <Ionicons name="search-outline" size={18} color="#9CA3AF" />
-                        <Text style={{ flex: 1, color: '#9CA3AF', fontSize: 14, paddingVertical: 8 }}>
-                            Search city, title, area...
+                        <Ionicons name="search-outline" size={18} color={colors.textMuted} />
+                        <Text style={{
+                            flex: 1,
+                            fontFamily: fonts.body,
+                            color: colors.textMuted,
+                            fontSize: fontSize.body,
+                            paddingVertical: spacing.sm,
+                        }}>
+                            Search city, area, or property...
                         </Text>
                         <TouchableOpacity
                             onPress={() => router.push('/(root)/(tabs)/explore?openFilters=true')}
                             style={{
                                 width: 36,
                                 height: 36,
-                                borderRadius: 10,
-                                backgroundColor: '#1C685D',
+                                borderRadius: radius.sm,
+                                backgroundColor: colors.brandSubtle,
+                                borderWidth: 1,
+                                borderColor: 'rgba(107, 122, 87, 0.15)',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                             }}
                         >
-                            <Ionicons name="options-outline" size={16} color="#FFFFFF" />
+                            <Ionicons name="options-outline" size={16} color={colors.brand} />
                         </TouchableOpacity>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
 
-            {/* Scrollable content — no SafeAreaView here to avoid the gap */}
+            {/* ── Scrollable content ── */}
             <FlatList
                 data={recommendedProperties}
                 keyExtractor={(item) => item.id}
-                contentContainerStyle={{ paddingBottom: 110, paddingTop: 20 }}
+                contentContainerStyle={{ paddingBottom: 100, paddingTop: spacing.xxl }}
                 showsVerticalScrollIndicator={false}
-                    ListHeaderComponent={
-                        <View>
-                            {/* Featured section */}
-                            <View style={{ marginBottom: 8 }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 14 }}>
-                                    <Text style={{ fontSize: 18, fontWeight: '800', color: '#0F1712' }}>Featured</Text>
-                                    <Text style={{ fontSize: 13, color: '#1C685D', fontWeight: '600' }}>See all</Text>
-                                </View>
-
-                                {isLoading ? (
-                                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-                                        <FeaturedCardSkeleton />
-                                        <FeaturedCardSkeleton />
-                                    </ScrollView>
-                                ) : (
-                                    <FlatList
-                                        data={featuredProperties}
-                                        keyExtractor={(item) => item.id}
-                                        renderItem={({ item }) => <FeaturedCard property={item} />}
-                                        horizontal
-                                        showsHorizontalScrollIndicator={false}
-                                        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 4 }}
-                                    />
-                                )}
+                ListHeaderComponent={
+                    <View>
+                        {/* Featured section */}
+                        <View style={{ marginBottom: spacing.sectionGap }}>
+                            <View style={{ paddingHorizontal: spacing.pageHorizontal, marginBottom: spacing.md }}>
+                                <SectionHeader
+                                    title="Featured"
+                                    action="See all"
+                                    onAction={() => router.push('/(root)/(tabs)/explore')}
+                                />
                             </View>
 
-                            {/* Recommended heading */}
-                            <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 16, marginBottom: 14 }}>
-                                <Text style={{ fontSize: 18, fontWeight: '800', color: '#0F1712' }}>Recommended</Text>
-                            </View>
+                            {isLoading ? (
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={{ paddingHorizontal: spacing.pageHorizontal, gap: spacing.md }}
+                                >
+                                    <FeaturedCardSkeleton />
+                                    <FeaturedCardSkeleton />
+                                </ScrollView>
+                            ) : (
+                                <FlatList
+                                    data={featuredProperties}
+                                    keyExtractor={(item) => item.id}
+                                    renderItem={({ item }) => <FeaturedCard property={item} />}
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={{
+                                        paddingHorizontal: spacing.pageHorizontal,
+                                        paddingBottom: spacing.xs,
+                                    }}
+                                />
+                            )}
                         </View>
-                    }
-                    renderItem={({ item }) => (
-                        <View style={{ paddingHorizontal: 20 }}>
-                            <PropertyCard property={item} />
+
+                        {/* Recommended heading */}
+                        <View style={{ paddingHorizontal: spacing.pageHorizontal, marginBottom: spacing.md }}>
+                            <SectionHeader title="Recommended" />
                         </View>
-                    )}
-                    ListEmptyComponent={
-                        isLoading ? (
-                            <View style={{ paddingHorizontal: 20 }}>
-                                <PropertyCardSkeleton />
-                                <PropertyCardSkeleton />
-                                <PropertyCardSkeleton />
-                            </View>
-                        ) : (
-                            <View style={{ alignItems: 'center', paddingVertical: 40 }}>
-                                <Text style={{ color: '#9CA3AF', fontSize: 15 }}>No properties found</Text>
-                            </View>
-                        )
-                    }
-                />
+                    </View>
+                }
+                renderItem={({ item }) => (
+                    <View style={{ paddingHorizontal: spacing.pageHorizontal }}>
+                        <PropertyCard property={item} />
+                    </View>
+                )}
+                ListEmptyComponent={
+                    isLoading ? (
+                        <View style={{ paddingHorizontal: spacing.pageHorizontal }}>
+                            <PropertyCardSkeleton />
+                            <PropertyCardSkeleton />
+                            <PropertyCardSkeleton />
+                        </View>
+                    ) : (
+                        <View style={{ alignItems: 'center', paddingVertical: spacing.mega, paddingHorizontal: spacing.pageHorizontal }}>
+                            <Text style={{
+                                fontFamily: fonts.body,
+                                color: colors.textMuted,
+                                fontSize: fontSize.body,
+                                textAlign: 'center',
+                            }}>
+                                No properties found.
+                            </Text>
+                        </View>
+                    )
+                }
+            />
         </View>
-    )
+    );
 }

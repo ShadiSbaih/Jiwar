@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, View, ViewStyle } from 'react-native';
+import { colors, radius, spacing } from '@/constants/theme';
 
 export function Skeleton({ style }: { style?: ViewStyle }) {
     const fadeAnim = useRef(new Animated.Value(0.4)).current;
@@ -7,8 +8,8 @@ export function Skeleton({ style }: { style?: ViewStyle }) {
     useEffect(() => {
         Animated.loop(
             Animated.sequence([
-                Animated.timing(fadeAnim, { toValue: 0.85, duration: 900, useNativeDriver: true }),
-                Animated.timing(fadeAnim, { toValue: 0.4, duration: 900, useNativeDriver: true }),
+                Animated.timing(fadeAnim, { toValue: 0.85, duration: 1000, useNativeDriver: true }),
+                Animated.timing(fadeAnim, { toValue: 0.4, duration: 1000, useNativeDriver: true }),
             ])
         ).start();
     }, [fadeAnim]);
@@ -18,8 +19,9 @@ export function Skeleton({ style }: { style?: ViewStyle }) {
             style={[
                 {
                     opacity: fadeAnim,
-                    backgroundColor: '#D1E8E4',
-                    borderRadius: 10,
+                    // Warm ivory skeleton — matches Desert Minimal palette
+                    backgroundColor: '#E8E2D8',
+                    borderRadius: radius.xs,
                 },
                 style,
             ]}
@@ -27,27 +29,25 @@ export function Skeleton({ style }: { style?: ViewStyle }) {
     );
 }
 
-/** Matches the new full-width PropertyCard layout */
+/** Matches PropertyCard layout */
 export function PropertyCardSkeleton() {
     return (
         <View style={{
-            backgroundColor: '#FFFFFF',
-            borderRadius: 20,
-            marginBottom: 16,
+            backgroundColor: colors.surface,
+            borderRadius: radius.lg,
+            marginBottom: spacing.itemGap,
             overflow: 'hidden',
-            shadowColor: '#08383C',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.06,
-            shadowRadius: 10,
-            elevation: 2,
+            borderWidth: 1,
+            borderColor: colors.border,
         }}>
             {/* Photo area */}
-            <Skeleton style={{ width: '100%', height: 190, borderRadius: 0 }} />
+            <Skeleton style={{ width: '100%', height: 192, borderRadius: 0 }} />
             {/* Body */}
-            <View style={{ padding: 16, gap: 10 }}>
-                <Skeleton style={{ height: 16, width: '70%' }} />
-                <Skeleton style={{ height: 13, width: '45%' }} />
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
+            <View style={{ padding: spacing.lg, gap: spacing.sm }}>
+                <Skeleton style={{ height: 11, width: '30%', borderRadius: 4 }} />
+                <Skeleton style={{ height: 18, width: '75%' }} />
+                <Skeleton style={{ height: 12, width: '45%' }} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.xs }}>
                     <Skeleton style={{ height: 18, width: 90 }} />
                     <Skeleton style={{ height: 18, width: 80 }} />
                 </View>
@@ -56,26 +56,27 @@ export function PropertyCardSkeleton() {
     );
 }
 
-/** Matches the new FeaturedCard layout */
+/** Matches FeaturedCard layout */
 export function FeaturedCardSkeleton() {
     return (
         <View style={{
-            width: 220,
-            marginRight: 14,
-            borderRadius: 20,
+            width: 240,
+            marginRight: spacing.lg,
+            borderRadius: radius.lg,
             overflow: 'hidden',
-            backgroundColor: '#FFFFFF',
-            shadowColor: '#08383C',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.1,
-            shadowRadius: 12,
-            elevation: 3,
+            backgroundColor: colors.surface,
+            borderWidth: 1,
+            borderColor: colors.border,
         }}>
-            <Skeleton style={{ width: '100%', height: 260, borderRadius: 0 }} />
-            <View style={{ padding: 14, gap: 8, flexDirection: 'row', justifyContent: 'space-around' }}>
-                <Skeleton style={{ height: 14, width: 50 }} />
-                <Skeleton style={{ height: 14, width: 50 }} />
-                <Skeleton style={{ height: 14, width: 50 }} />
+            <Skeleton style={{ width: '100%', height: 180, borderRadius: 0 }} />
+            <View style={{ padding: spacing.md, gap: spacing.sm }}>
+                <Skeleton style={{ height: 10, width: '30%', borderRadius: 4 }} />
+                <Skeleton style={{ height: 16, width: '80%' }} />
+                <Skeleton style={{ height: 11, width: '50%' }} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 }}>
+                    <Skeleton style={{ height: 15, width: 70 }} />
+                    <Skeleton style={{ height: 15, width: 60 }} />
+                </View>
             </View>
         </View>
     );
