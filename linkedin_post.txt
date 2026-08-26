@@ -1,0 +1,24 @@
+🚀 Just completed building Jiwar, a production-grade, full-stack cross-platform mobile application tailored for the luxury real estate market! 🏡✨
+
+Jiwar isn't just another MVP—it's engineered with a focus on smooth interactions, scalable architecture, and aesthetic excellence. I set out to deliver an editorial-grade user experience on iOS, Android, and Web, backed by a robust and secure technical foundation.
+
+Here’s a look under the hood:
+
+🛠 Tech Stack & Architecture:
+- Framework: React Native & Expo Router (SDK 54) for seamless file-based routing and native compilation via EAS.
+- State Management: Zustand for frictionless, offline-first global state without heavy prop drilling.
+- Identity & Security: Headless authentication via Clerk fully integrated with Supabase PostgreSQL Row Level Security (RLS) to ensure strict data integrity.
+- Backend & Storage: Supabase for database operations, object storage for property images, and secure policy enforcement.
+
+🎨 The "Desert Minimal" Design System:
+Moved away from generic utility classes to implement a strict, scalable bespoke token system using NativeWind and TailwindCSS. With a warm palette (Warm Ivory, Olive, Muted Gold) and strict typography (Playfair Display & Inter), every shadow, radius, and color perfectly aligns with the luxury brand identity across all OS paradigms.
+
+💡 Key Engineering Highlights:
+- Unidirectional Data Flow: Strict separation of UI, hooks, and services.
+- Performant Cartography: Native-feeling map integrations for property exploration.
+- Administrative Capabilities: Role-based access enabling seamless listing management and image uploads directly from the app.
+- Robust Kinematics: Global KeyboardAvoidingView strategies ensuring a flawless input experience across devices.
+
+Building Jiwar was an incredible journey in balancing high-end aesthetics with serious backend security. Thrilled to share this milestone!
+
+#ReactNative #Expo #Supabase #ClerkDev #Zustand #TypeScript #MobileDevelopment #RealEstateTech #LuxuryRealEstate #FullStack #SoftwareEngineering #Frontend #Backend #UIUX #Jiwar
