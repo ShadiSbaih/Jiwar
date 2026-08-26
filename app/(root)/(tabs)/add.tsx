@@ -623,7 +623,7 @@ export default function AddListingScreen() {
                                     color: colors.textMuted,
                                     marginTop: 2,
                                 }}>
-                                    Shown in Home's Featured row
+                                    Shown in Home&apos;s Featured row
                                 </Text>
                             </View>
                         </View>
