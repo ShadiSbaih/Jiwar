@@ -1,4 +1,3 @@
-![Jiwar Logo](./assets/images/splash.png)
 
 # Jiwar | Luxury Real Estate
 
